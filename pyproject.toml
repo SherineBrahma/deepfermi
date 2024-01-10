@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "DeepFermi"
+version = "0.0.1"
+description = "A deep learning framework for quantifying MR myocardial perfusion."
+readme = "README.md"
+requires-python = ">=3.10,<3.12"
+license = { file = "LICENSE" }
+keywords = ["MRI, myocardial perfusion, deep learning, PyTorch"]
+authors = [
+    { name = "Sherine Brahma", email = "sherine.brahma@ptb.de" },
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "numpy>=1.23,<2.0",
+    "torch>=2.0,<3.0",
+    "torchio",
+    "einops",    
+]
