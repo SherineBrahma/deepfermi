@@ -25,3 +25,18 @@ dependencies = [
     "torchio",
     "einops",    
 ]
+
+[project.optional-dependencies]
+test = [
+    "coverage",
+    "codecov",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+]
+lint = ["mypy", "flake8", "isort", "pre-commit", "autopep8", "pydocstyle"]
+docs = ["sphinx", "pydata-sphinx-theme", "sphinx-pyproject"]
+
+[project.urls]
+"repository" = "https://github.com/SherineBrahma/deepfermi"
