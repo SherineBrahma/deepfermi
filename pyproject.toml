@@ -23,7 +23,7 @@ dependencies = [
     "numpy>=1.23,<2.0",
     "torch>=2.0,<3.0",
     "torchio",
-    "einops",    
+    "einops",
 ]
 
 [project.optional-dependencies]
@@ -40,3 +40,66 @@ docs = ["sphinx", "pydata-sphinx-theme", "sphinx-pyproject"]
 
 [project.urls]
 "repository" = "https://github.com/SherineBrahma/deepfermi"
+
+# PyTest section
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error"]
+# addopts = "-n auto" # TODO: debug vscode missing tests if enabled
+
+# MyPy section
+[tool.mypy]
+warn_return_any = "False"
+check_untyped_defs = "True"
+warn_no_return = "True"
+warn_unreachable = "True"
+exclude = ["docs"]
+
+[[tool.mypy.overrides]]
+module = ["ismrmrd.*", "h5py", "scipy.*"]
+ignore_missing_imports = true
+
+[tool.black]
+line-length = 120
+skip-string-normalization = "True"
+target-version = ['py310']
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.venv
+  | _build
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip = ["__init__.py"]
+line_length = 120
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+force_single_line = "True"
+
+
+[tool.pydocstyle]
+convention = "numpy"
+add_ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D202",
+]
+# select = ["D200", "D201", "D205", "D206", "D207", "D208", "D214", "D215", "D409"]
+
+[tool.codespell]
+builtin = "en-GB_to_en-US"
+ignore-words-list = "te,TE"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
