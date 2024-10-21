@@ -1,0 +1,65 @@
+####################################### Training mode configurations ###############################################  
+
+# General Information
+info:
+  project_name: Debug
+  project_description: Developing Code
+
+# Directory paths
+paths:
+  dataset: /data/brahma01/deepfermi/invivo/data/
+  save: /data/brahma01/deepfermi/invivo/Experiments/
+
+# Parameters configurations for training the framework
+train_params:
+  # Dataset specific
+  dataset:
+    file_name: invivo_perfusion_data.npz
+    build_dataset_flag: False
+    SNR_ctc: 15
+    img_dim: [120, 120]
+    crop_dim: [60, 60]
+    eta_bkg_ref: [0.001667, 0.1, 0.01]
+  # Network specific
+  network:
+    # Architecture
+    ncin: 2
+    nfilters: 16    
+    nstage: 3
+    nconv_stage: 2
+    ncout: 12
+    learn_lambda: True
+    dropout: 0.0
+    # Data-consistency configurations
+    osamp: 20
+    nu: 1
+    max_iter_lbfgs: 10000
+    max_eval_lbfgs: 10000
+    # Check-pointing
+    train_from_ckpt: False
+    load_unet: unet_load
+    backprop_ckpt: 0
+  # Optimizer configurations
+  optimizer:
+    unet_lr: 10.e-5
+    unet_wd: 10.e-12
+  # General 
+  ntrain: ['56', '75', '109', '62', '45', '101', '10', '54' , '42' ,'47', '107', '61', '39', '83', '37', '58', '71']
+  nval: ['46' , '38' , '76' , '102', '44']
+  ntest: ['36' , '63', '86' , '108']
+  nepochs: 5883 # 348 # 695 # 1 # 
+  val_step_size: 500
+  mb: 1
+  ssup_split: 0.3
+  mode: 'pre_training' # 'pre_training' 'fine_tuning'
+  # Fermi Operator
+  osamp: 20
+  pre_scale_factor: 10
+  # Backend device
+  device: 'cuda'
+  # Cross validation
+  cross_val_flag: True
+  cross_val_k: 5
+  cross_val_fold: 5
+  # Augment training dataset
+  aug_dataset_flag: True

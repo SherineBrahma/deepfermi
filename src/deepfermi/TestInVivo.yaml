@@ -1,0 +1,37 @@
+####################################### Testing mode configurations ###############################################
+# Testing network configurations
+project_name: Debug # Test_xce_clean
+save_path: '/data/brahma01/DCEPerfusion/InVivo/Experiments/'
+read_project_name: '10_PINN_cross_val_5_fold_5/'
+read_dir: '/data/brahma01/DCEPerfusion/InVivo/Experiments/'
+dataset_path: '/data/brahma01/DCEPerfusion/InVivo/invivo_perfusion_data.npz'
+test_train_params_list: ['train_params']
+test_unet_list: ['unet']
+test_adv_list: ['adv']
+
+# General configurations
+mode: 'testing'
+system: 'deterministic'
+n_train: 17 # 
+n_val: 5 # 1 # 
+n_test: 4 # 1 # 
+testing_split: 'test'
+test_SNR_ctc: 0.5 # .inf # 
+device: 'cuda'
+eta_bkg_ref: [0.001667, 0.0, 0.01]
+
+# General configurations         
+test_slice_indx: 0
+test_osamp: 20
+test_nsamps: 1
+        
+# Flags
+inject_perturbation : False
+inject_noise : False
+filter_outliers : False
+test_network: False
+estimation_eval: True
+bullseye_eval: True
+train_curves: False
+outlier_tolerance_eval: True
+load_eta_list: ['eta_net', 'eta_lbfgs']

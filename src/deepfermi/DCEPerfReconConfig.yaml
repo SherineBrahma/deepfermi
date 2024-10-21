@@ -1,0 +1,67 @@
+####################################### Training mode configurations ###############################################  
+# General configurations
+project_name: 'Debug' # Debug
+project_description: 'Developing Code'
+system: 'deterministic' # 'deterministic' 'stochastic'
+mode: 'fine_tuning' #'pre_training' 'fine_tuning' 'testing'
+learn_lambda: 'True'
+img_dim: [120, 120, 113]
+dataset_path: '/data/brahma01/DCEPerfusion/InVivo/invivo_perfusion_data.npz'
+save_path: '/data/brahma01/DCEPerfusion/InVivo/Experiments/'
+
+# Dataset configurations
+n_train: 17 # 2 # 
+n_val: 5 # 1 # 
+n_test: 4 # 1 # 
+
+# General Traning configurations
+crop_len: 60
+n_epochs: 5883
+net_lr: 10.e-4
+net_wd: 10.e-12
+mb: 1 # Only mb = 1 is allowed now
+adv_mb: 1
+adv_iter: 20
+val_step_size: 500
+n_spokes: 1130
+SNR_ctc: 0.1
+train_tsplit: 0.3
+device: 'cuda'
+eta_bkg_ref: [0.001667, 0.0, 0.01]
+
+# Fermi specific configurations
+osamp: 20
+
+# Network configurations
+train_from_ckpt: 'False'
+load_unet: 'unet_load'
+backprop_ckpt: 0
+
+# Data-consistency configurations
+nu: 1
+max_iter_lbfgs: 500
+max_eval_lbfgs: 500
+
+####################################### Testing mode configurations ###############################################
+# General configurations
+test_SNR_ctc: 0.1
+testing_split: 'test'
+# max_eval_lbfgs: 100
+
+# General configurations         
+test_slice_indx: 0
+test_osamp: 20
+test_nsamps: 1
+
+# Testing network configurations
+read_dir: '/data/brahma01/DCEPerfusion/InVivo/Experiments/'
+read_project_name: 'Failed_02_Deterministic_PINN'     
+test_train_params_list: ['train_params'] 
+test_aenet_list: ['aenet']
+test_adv_list: ['adv']
+        
+# Flags
+test_network: True
+gen_perfusion_maps: True
+plot_conc_curves: True
+load_eta_list: ['eta_net', 'eta_lbfgs', 'eta_gnd']

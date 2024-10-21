@@ -1,0 +1,38 @@
+####################################### Testing mode configurations ###############################################  
+
+# General
+info:
+  project_name: Test_Seg_Outliers
+  project_description: Developing Code
+  read_project_name: 06_PINN_cross_val_5_fold_3 # 10_PINN_cross_val_5_fold_5  # 02_PINN_cross_val_5_fold_1 # 06_PINN_cross_val_5_fold_3
+# Paths
+paths:
+  dataset: /data/brahma01/deepfermi/invivo/data/ 
+  read: /data/brahma01/deepfermi/invivo/Experiments/
+  save: /data/brahma01/deepfermi/invivo/Experiments/
+
+# Parameters configurations for testing the framework
+test_params:
+  # Dataset specific
+  dataset:
+    file_name: invivo_perfusion_data.npz
+    build_dataset_flag: False
+    SNR_ctc: 15
+    img_dim: [120, 120]
+    crop_dim: [60, 60]
+    eta_bkg_ref: [0.001667, 0.1, 0.01]
+  # Network specific
+  load_unet: unet_load
+  # Fermi Operator
+  osamp: 20
+  pre_scale_factor: 10
+  # General
+  ntest: ['36' , '63', '86' , '108']
+  mode: 'testing' # 'pre_training' 'fine_tuning' 
+  nsamp: 100
+  calib_nsamp: 100
+  clean_outliers: False
+  morph_flag: False
+  is_erosion_not_dilate: False
+  # Backend device
+  device: 'cuda'
