@@ -17,7 +17,6 @@ def main() -> None:
     
     # Reading command line
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config_path', default='/data/brahma01/deepfermi/invivo/config/train_config.yaml',type=str)    
     parser.add_argument('--project_name', default=None,type=str)
     parser.add_argument('--read_project_name', default=None,type=str)
     parser.add_argument('--dataset_file_name', default=None,type=str)
@@ -32,9 +31,9 @@ def main() -> None:
     args = parser.parse_args()
     
     # Reading configuration file
-    config_path = args.config_path
+    config_path = "config/train_config.yaml"
     cfg = TrainConfig.from_yaml(config_path)
-    
+    # src/deepfermi/
     # Overriding configuration if command line input provided
     cfg.info.project_name = cfg.info.project_name if args.project_name == None else args.project_name
     cfg.train_params.dataset.file_name = cfg.train_params.dataset.file_name if args.dataset_file_name == None else args.dataset_file_name
@@ -132,11 +131,12 @@ def main() -> None:
                          unet)
     
     # Record training configurations
-    save_path = Path.joinpath(Path(cfg.paths.save+cfg.info.project_name), 'train_config.yaml')
-    with open(save_path, 'w') as file:
+    save_path = Path.joinpath(Path(cfg.paths.save), cfg.info.project_name)
+    save_file = Path.joinpath(save_path, 'train_config.yaml')
+    with open(save_file, 'w') as file:
         yaml.dump(cfg.yaml_config, file, default_flow_style=None)
-    save_path = Path.joinpath(Path(cfg.paths.save+cfg.info.project_name), 'network_params.txt')
-    with open(save_path, 'w') as file:
+    save_file = Path.joinpath(save_path, 'network_params.txt')
+    with open(save_file, 'w') as file:
         table, total_params = cfg.train_params.network.parameters(unet)
         file.write(unet._get_name() +  " parameter breakdown:\n")
         file.write(str(table))

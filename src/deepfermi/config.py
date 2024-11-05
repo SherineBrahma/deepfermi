@@ -15,6 +15,7 @@ def construct_yaml_obj(obj: Type, data: Dict[str, Any]):
     constructor_args = {}
     
     for key, value in data.items():
+        
         if key in field_types:
             expected_type = field_types[key]
             if is_dataclass(expected_type):
@@ -24,12 +25,12 @@ def construct_yaml_obj(obj: Type, data: Dict[str, Any]):
                 if not isinstance(expected_type, Enum):
                     try:                           
                         check_type(value, type(expected_type))
-                        object.__setattr__(obj, key, value)
+                        obj.__setattr__(key, value)
                     except Exception as e:
                         error_message = 'Error: expected type of ' + key + ' is ' + type(expected_type).__name__ + ', got ' + type(value).__name__ + '.'
                         raise TypeError(error_message)      
                 else:
-                            object.__setattr__(obj, key, eval(type(expected_type).__name__ )(value))
+                            obj.__setattr__(key, eval(type(expected_type).__name__ )(value))
         else:
             raise KeyError(f"Unexpected key '{key}' for class '{type(obj).__name__}'")
     
@@ -43,9 +44,13 @@ class GeneralInfo:
     
 @dataclass
 class Paths:
-    dataset: str = '/data/brahma01/DCEPerfusion/sim_perfusion_data.h5'
-    read: str = ''
-    save: str = '/data/brahma01/DCEPerfusion/Experiments/'
+    dataset: str = str(Path(__file__).resolve().parent.parent.parent / 'src/deepfermi/data/')
+    read: str = str(Path(__file__).resolve().parent.parent.parent / 'src/deepfermi/Experiments/')
+    save: str = str(Path(__file__).resolve().parent.parent.parent / 'src/deepfermi/Experiments/')
+        
+    def __setattr__(self, attr, val):
+        val = str(Path(__file__).resolve().parent.parent.parent / val)
+        super(Paths, self).__setattr__(attr, val)
     
 @dataclass
 class Dataset:
@@ -134,6 +139,7 @@ class TrainConfig:
     @classmethod
     def from_yaml(cls, config_path: str) -> TrainConfig:
         
+        config_path = str(Path(__file__).resolve().parent.parent.parent / "config/train_config.yaml")
         with open(Path(config_path), "r") as stream:
             try:
                 yaml_config = yaml.safe_load(stream)

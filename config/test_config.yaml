@@ -7,9 +7,9 @@ info:
   read_project_name: 06_PINN_cross_val_5_fold_3 # 10_PINN_cross_val_5_fold_5  # 02_PINN_cross_val_5_fold_1 # 06_PINN_cross_val_5_fold_3
 # Paths
 paths:
-  dataset: /data/brahma01/deepfermi/invivo/data/ 
-  read: /data/brahma01/deepfermi/invivo/Experiments/
-  save: /data/brahma01/deepfermi/invivo/Experiments/
+  dataset: src/deepfermi/data/ 
+  read: src/deepfermi/Experiments/
+  save: src/deepfermi/Experiments/
 
 # Parameters configurations for testing the framework
 test_params:

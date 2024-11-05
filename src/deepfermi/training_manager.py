@@ -19,6 +19,7 @@ import numpy as np
 from termcolor import colored
 import torch
 from torch.utils.data import DataLoader
+from pathlib import Path
 
 from data_loading import collate
 from tracker import Tracker
@@ -66,7 +67,7 @@ class TrainingManager():
                                             )
             
         # Tracker
-        self.tracker = Tracker(save_path=(cfg.paths.save+cfg.info.project_name))
+        self.tracker = Tracker(save_path=str(Path.joinpath(Path(cfg.paths.save), cfg.info.project_name)))
 
     def model_eval(self, dataset, dsplit):
             

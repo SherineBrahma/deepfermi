@@ -7,8 +7,8 @@ info:
 
 # Directory paths
 paths:
-  dataset: /data/brahma01/deepfermi/invivo/data/
-  save: /data/brahma01/deepfermi/invivo/Experiments/
+  dataset: src/deepfermi/data/
+  save: src/deepfermi/Experiments/
 
 # Parameters configurations for training the framework
 train_params:
