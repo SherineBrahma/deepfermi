@@ -9,8 +9,9 @@ import random
 from termcolor import colored
 import time as exe_time
 from tqdm import tqdm
+from tqdm import trange
 
-import data.dataio as dataio
+import dataio
 from fermi import convolve, fermi_ir_func, FermiLBFGSSolver, shift_aif
 from utils import Interp_Linear_1D
 from sklearn.model_selection import KFold
@@ -93,9 +94,11 @@ class DatasetDCEPerfusion(Dataset):
             fold = config.train_params.cross_val_fold
             combined_pid_list = config.train_params.nval + config.train_params.ntrain
             kf = KFold(n_splits=k_val)            
-            if pid_to_load==config.train_params.ntrain:            
+            if pid_to_load==config.train_params.ntrain:
+                print('Building Training Set...')
                 pid_to_load = [combined_pid_list[i] for i in list(kf.split(combined_pid_list))[fold-1][0]]
             elif pid_to_load==config.train_params.nval:
+                print('Building Validation Set...')
                 pid_to_load = [combined_pid_list[i] for i in list(kf.split(combined_pid_list))[fold-1][1]]
                     
         # Construct dataset dictionary        
@@ -137,8 +140,8 @@ class DatasetDCEPerfusion(Dataset):
         
         # Preprocessing steps        
         # Data-preprocessing
-        # Stacking the myocardial slices per patient
-        pid, im_sig, ctc, aif, time, wlen, seg = DatasetDCEPerfusion._stack_myo_slices(pid, im_sig, ctc, aif, time, wlen, seg)
+        # # Stacking the myocardial slices per patient
+        # pid, im_sig, ctc, aif, time, wlen, seg = DatasetDCEPerfusion._stack_myo_slices(pid, im_sig, ctc, aif, time, wlen, seg)
         # Precondition ctc background
         ctc = DatasetDCEPerfusion._precond_bkg(aif, ctc, seg, time, wlen, osamp, eta_bkg_ref, device)
         # Calculate main bolus        
@@ -150,8 +153,9 @@ class DatasetDCEPerfusion(Dataset):
         eta_pretrain = DatasetDCEPerfusion._precond_eta_pretrain(eta_pretrain, seg, eta_bkg_ref)        
         # Augumented dataset generation        
         if aug_dataset_flag==True:
+            print('Augumenting Dataset...')
             # Calculate conventional LBFGS estimates without deep learning
-            eta_pretrain_aug, mask_od_aug, aif_aug, time_aug = DatasetDCEPerfusion._aug_dataset(pid, ctc, aif, mbolus, seg, time, wlen, osamp, basal_slc_id=3)
+            eta_pretrain_aug, mask_od_aug, aif_aug, time_aug = DatasetDCEPerfusion._aug_dataset(pid, ctc, aif, mbolus, seg, time, wlen, osamp)
             # Precondition eta_pretrain background
             eta_pretrain_aug = DatasetDCEPerfusion._precond_eta_pretrain_aug(eta_pretrain_aug, seg, eta_bkg_ref)
             # Construct
@@ -314,18 +318,17 @@ class DatasetDCEPerfusion(Dataset):
         eta = seg.unsqueeze(1) * torch.ones(eta_dim, device=device)
         init_val = rearrange(torch.tensor([flow_init, delay_init, decay_init], device=device), 'np -> 1 np 1 1')
         fermi_lbfgs_solver = FermiLBFGSSolver(osamp=osamp, od_enable=od_enable).to(device)
-        for i in tqdm(range(mb)):
+        pbar = trange(mb, desc='PID', leave=True)
+        for i in pbar:
+            pbar.set_description('Progress (Current PID = ' + str(pid[i]) + ')')
+            pbar.refresh()
             wlen_i = wlen[i]
             ctc_i = ctc[i:i+1,...,0:wlen_i]
             seg_i = seg[i:i+1,...]
             # Aligining AIF
             aif_i = aif[i:i+1,...,0:wlen_i]
             time_i = time[i,0:wlen_i]
-            j = int(2 + 3*np.floor(i/(basal_slc_id)))
-            mbolus_i = mbolus[j:j+1,0:wlen_i]
-            print(':::::::::::')
-            print('i: '+ str(i))
-            print('j: '+ str(j))
+            mbolus_i = mbolus[i:i+1,0:wlen_i]
             aif_i = shift_aif(aif_i, mbolus_i, time_i, osamp)
             aif_i_2D = aif_i.unsqueeze(0).unsqueeze(0).unsqueeze(0) * torch.ones(ctc_i.shape, device=aif_i.device)
             with torch.no_grad():
@@ -334,6 +337,8 @@ class DatasetDCEPerfusion(Dataset):
                 eta[i,...], mask_od[i,0:wlen_i] = fermi_lbfgs_solver(eta_init, ctc_i, aif_i_2D, seg_i, time_i)
                 time_taken.append(exe_time.time()-t0)
                 aif[i,0:wlen_i] = aif_i
+            pbar.set_description('Progress')
+            pbar.refresh()
         eta = eta.to(in_device)
         mask_od = mask_od.to(in_device)
         aif = aif.to(in_device)
@@ -353,7 +358,7 @@ class DatasetDCEPerfusion(Dataset):
                 
         return eta
     
-    def _aug_dataset(pid, ctc, aif, mbolus, seg, time, wlen, osamp, flow_init = 0.05, delay_init = 2, decay_init = 0.1, basal_slc_id=3, device = 'cuda'):
+    def _aug_dataset(pid, ctc, aif, mbolus, seg, time, wlen, osamp, flow_init = 0.05, delay_init = 2, decay_init = 0.1, device = 'cuda'):
         
         # General initializations
         in_device = ctc.device
@@ -370,19 +375,21 @@ class DatasetDCEPerfusion(Dataset):
         time_aug = torch.zeros([mb, mb, tdim], device=device)
         init_val = rearrange(torch.tensor([flow_init, delay_init, decay_init], device=device), 'np -> 1 np 1 1')
         fermi_lbfgs_solver = FermiLBFGSSolver(osamp=osamp, od_enable=True).to(device)
-        for i in tqdm(range(mb), desc=" outer", position=0):
+        pbar_outer = trange(mb, desc='PID', leave=True, position=0)
+        for i in pbar_outer:
+            pbar_outer.set_description('Progress (Current Outer PID = ' + str(pid[i]) + ')')
+            pbar_outer.refresh()
+            # for i in tqdm(range(mb), desc=" outer", position=0):
             wlen_i = wlen[i]
             ctc_i = ctc[i:i+1,...,0:wlen_i]
             seg_i = seg[i:i+1,...]
             time_i = time[i,0:wlen_i]
-            j = int(2 + 3*np.floor(i/(basal_slc_id)))
-            mbolus_i = mbolus[j:j+1,0:wlen_i]
-            print(':::::::::::')
-            print('i: '+ str(i))
-            print('j: '+ str(j))
             mbolus_i = mbolus[i:i+1,0:wlen_i]
-            # Calculated augmented pairs            
-            for j in tqdm(range(mb), desc="Inner", position=1, leave=False):
+            # Calculated augmented pairs           
+            pbar_inner = trange(mb, desc='PID ', leave=False, position=1) 
+            for j in pbar_inner:
+                pbar_inner.set_description('AIF Exchange Progress (Current Inner PID = ' + str(pid[i]) + ')')
+                pbar_inner.refresh()
                 aif_j = aif[j:j+1,...,0:wlen_i]
                 aif_ij = shift_aif(aif_j, mbolus_i, time_i, osamp)
                 aif_ij_2D = aif_ij.unsqueeze(0).unsqueeze(0).unsqueeze(0) * torch.ones(aif_ij.shape, device=aif_ij.device)            
@@ -400,6 +407,9 @@ class DatasetDCEPerfusion(Dataset):
                     # plt.plot(time_i.cpu(), aif_j.squeeze(0).cpu(), label="aif", linewidth=1, color="black", linestyle="solid")
                     # plt.legend(loc="upper right")   
                     # plt.show()
+                
+            pbar_outer.set_description('Progress')
+            pbar_outer.refresh()
                     
         eta_aug = eta_aug.to(in_device)
         mask_od = mask_od.to(in_device)

@@ -33,7 +33,7 @@ def main() -> None:
     # Reading configuration file
     config_path = "config/train_config.yaml"
     cfg = TrainConfig.from_yaml(config_path)
-    # src/deepfermi/
+    
     # Overriding configuration if command line input provided
     cfg.info.project_name = cfg.info.project_name if args.project_name == None else args.project_name
     cfg.train_params.dataset.file_name = cfg.train_params.dataset.file_name if args.dataset_file_name == None else args.dataset_file_name

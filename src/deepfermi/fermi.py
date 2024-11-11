@@ -7,7 +7,7 @@ from tqdm import tqdm
 import torch.nn.functional as F
 from network.Unet import Unet
 # from network.detect_net import DetectNet
-import data.dataio
+import dataio
 from termcolor import colored
 
 # Fermi impusle response
@@ -117,7 +117,7 @@ class FermiLBFGSSolver(nn.Module):
         eta_lbfgs = self.S_op * eta_init
         eta_lbfgs.requires_grad = True
         # lbfgs = optim.LBFGS([eta_lbfgs], lr=1 , history_size=10, max_eval=1, max_iter=1, line_search_fn="strong_wolfe")
-        lbfgs = optim.LBFGS([eta_lbfgs], lr=1 , history_size=10, max_eval=10000, max_iter=10000, line_search_fn="strong_wolfe")
+        lbfgs = optim.LBFGS([eta_lbfgs], lr=1 , history_size=10, max_eval=1000, max_iter=1000, line_search_fn="strong_wolfe")
         
         global zmod
         zmod = 0
@@ -152,13 +152,13 @@ class FermiLBFGSSolver(nn.Module):
             # Loss function
             C_mse = torch.sum(ctc_lbfgs**2)
             objective = torch.sum(((ctc_lbfgs - ctc_est))**2)/C_mse + (F.relu(-eta_lbfgs)**2).sum()
-            objective.backward(retain_graph=True)   
+            objective.backward(retain_graph=True)
             return objective
         
         # LBFGS Execution    
         prev_mask_od = mask_od = torch.ones(indx_lbfgs.__len__())
         od_iter = 0
-        od_max_iter = 5
+        od_max_iter = 3
         terminate = False
         while terminate == False:
             # LBFGS optimzation steps

@@ -7,14 +7,14 @@ info:
 
 # Directory paths
 paths:
-  dataset: src/deepfermi/data/
-  save: src/deepfermi/Experiments/
+  dataset: data/
+  save: Experiments/
 
 # Parameters configurations for training the framework
 train_params:
   # Dataset specific
   dataset:
-    file_name: invivo_perfusion_data.npz
+    file_name: dce_perfusion_data.npz # invivo_perfusion_data.npz # 
     build_dataset_flag: False
     SNR_ctc: 15
     img_dim: [120, 120]
@@ -44,9 +44,9 @@ train_params:
     unet_lr: 10.e-5
     unet_wd: 10.e-12
   # General 
-  ntrain: ['56', '75', '109', '62', '45', '101', '10', '54' , '42' ,'47', '107', '61', '39', '83', '37', '58', '71']
-  nval: ['46' , '38' , '76' , '102', '44']
-  ntest: ['36' , '63', '86' , '108']
+  ntrain: ['Pat0', 'Pat1', 'Pat2'] # ['56', '75', '109'] # 
+  nval: ['Pat3'] # ['46'] # 
+  ntest: ['Pat4'] # ['36'] # 
   nepochs: 5883 # 348 # 695 # 1 # 
   val_step_size: 500
   mb: 1
@@ -59,7 +59,7 @@ train_params:
   device: 'cuda'
   # Cross validation
   cross_val_flag: True
-  cross_val_k: 5
-  cross_val_fold: 5
+  cross_val_k: 2
+  cross_val_fold: 1
   # Augment training dataset
   aug_dataset_flag: True

@@ -160,5 +160,6 @@ cython_debug/
 #.idea/
 
 # Data Folders
-src/deepfermi/data/
-src/deepfermi/Experiments/
+data/
+Experiments/*
+!Experiments/XCAT_phantom
