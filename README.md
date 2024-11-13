@@ -42,16 +42,23 @@ python src/deepfermi/data_generation.py
 
 This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the data folder. You can customize the relevant parameters for generating data in ```data_generation.py```.
 
-Note: Only five cardiac slices are provided in this repository.
+Note: Only five cardiac slices are provided in this repository for training, validation, and testing.
 
 ### Step 2: Choose Your Option
 #### Option 1: Test a Pre-Trained Network
+If you would like to test a pre-trained network (without training it yourself), you can directly run the following command:
+```
+python src/deepfermi/test.py
+```
+This will load the pre-trained model and run the test as per the configuration in test.yaml.
 
 #### Option 2: Train the Network from Scratch
+If you would prefer to train the network from scratch, you can do so after generating the data by running:
 
-
-
-
+```
+python src/deepfermi/main.py
+```
+The main.py will read the training configuration from the ```/config/train.yaml``` file.
 
 
 
