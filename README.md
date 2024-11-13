@@ -5,7 +5,7 @@ A deep learning framework for quantifying MR myocardial perfusion
 
 ## Installation
 
-1. Clone the repo
+## 1. Clone the repository
 2. Create/select a python environment
 3. Open the terminal in the "DeepFermi" main folder
 4. Install python3.8: ``` conda install python=3.8 ```
