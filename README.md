@@ -58,8 +58,10 @@ If you would prefer to train the network from scratch, you can do so after gener
 ```
 python src/deepfermi/main.py
 ```
-The main.py will read the training configuration from the ```/config/train.yaml``` file.
-
+The main.py will read the training configuration from the ```/config/train.yaml``` file. Subsequently, for testing the trained model, you can run run the following command:
+```
+python src/deepfermi/test.py
+```
 
 
 
