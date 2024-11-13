@@ -36,7 +36,9 @@ pre-commit install
 ### Step 1: Generate DCE Perfusion Data
 Before proceeding with training or testing, you first need to generate the DCE perfusion data. This can be done by running the ```data_generation.py``` script using the XCAT phantom file provided:
 
-```python src/deepfermi/data_generation.py```
+```
+python src/deepfermi/data_generation.py
+```
 
 This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the data folder. You can customize the relevant parameters for generating data in ```data_generation.py```.
 
