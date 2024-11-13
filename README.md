@@ -15,8 +15,10 @@ Clone the repository to your local machine
 
 Create a new Python environment (e.g., using conda) and activate it:
 
-``` conda create -n deepfermi python=3.8
-conda activate deepfermi ```
+``` 
+conda create -n deepfermi python=3.8
+conda activate deepfermi
+ ```
 
 2. Create/select a python environment
 3. Open the terminal in the "DeepFermi" main folder
