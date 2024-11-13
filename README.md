@@ -12,7 +12,7 @@ git clone https://github.com/SherineBrahma/deepfermi.git
 ```
 
 ### 2. Set Up a Python Environment
-Create a new Python environment with Python 3.8 (e.g., using conda) and activate it:
+Create a new environment with Python 3.8 (e.g., using conda) and activate it:
 ``` 
 conda create -n deepfermi python=3.8
 conda activate deepfermi
@@ -30,3 +30,16 @@ To automatically run pre-commit hooks (like linting) before each commit, install
 ```
 pre-commit install
 ```
+
+## Usage
+
+### Step 1: Generate DCE Perfusion Data
+Before proceeding with training or testing, you first need to generate the DCE perfusion data. This can be done by running the ```data_generation.py``` script using the XCAT phantom file provided:
+
+```python src/deepfermi/data_generation.py```
+
+This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the data folder. You can customize the relevant parameters for generating data in ```data_generation.py```.
+
+Note: Only five cardiac slices are provided in this repository.
+
+
