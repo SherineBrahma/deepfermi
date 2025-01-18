@@ -30,6 +30,8 @@ dependencies = [
     "scikit-learn",
     "torchvision",
     "einops",
+    "imageio",
+    "h5py",
 ]
 
 [project.optional-dependencies]

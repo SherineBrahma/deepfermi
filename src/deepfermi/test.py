@@ -19,7 +19,8 @@ def main() -> None:
     
     # Reading command line
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config_path', default='/data/brahma01/deepfermi/invivo/config/test_config.yaml',type=str)    
+    default_config_path = str(Path(__file__).resolve().parent.parent.parent / 'config/test_config.yaml')
+    parser.add_argument('--config_path', default=default_config_path,type=str)    
     parser.add_argument('--project_name', default=None,type=str)
     parser.add_argument('--read_project_name', default=None,type=str)
     parser.add_argument('--dataset_file_name', default=None,type=str)
@@ -226,7 +227,7 @@ def main() -> None:
     time_taken = time_taken.cpu()
     
     # Saving tensors
-    save_path = test_cfg.paths.save + test_cfg.info.project_name
+    save_path = test_cfg.paths.save + '/' + test_cfg.info.project_name
     Path(save_path).mkdir(parents=True, exist_ok=True)
     np.save(Path.joinpath(Path(save_path), "pid.npy"), pid)
     np.save(Path.joinpath(Path(save_path), "im_sig.npy"), im_sig)

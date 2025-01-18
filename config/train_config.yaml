@@ -2,13 +2,13 @@
 
 # General Information
 info:
-  project_name: Debug
+  project_name: 01_manual_train
   project_description: Developing Code
 
 # Directory paths
 paths:
   dataset: data/
-  save: Experiments/
+  save: experiments/
 
 # Parameters configurations for training the framework
 train_params:

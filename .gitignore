@@ -162,5 +162,5 @@ cython_debug/
 # Data Folders
 data/*
 !/data/XCAT_phantom/
-Experiments/
+experiments/
 
