@@ -225,6 +225,7 @@ def main() -> None:
     eta_net = eta_net.cpu()
     eta_lbfgs = eta_lbfgs.cpu()
     time_taken = time_taken.cpu()
+    eta_gnd = test_dataset.eta_gnd.cpu()
     
     # Saving tensors
     save_path = test_cfg.paths.save + '/' + test_cfg.info.project_name
@@ -241,6 +242,7 @@ def main() -> None:
     np.save(Path.joinpath(Path(save_path), "eta_net.npy"), eta_net)    
     np.save(Path.joinpath(Path(save_path), "eta_lbfgs.npy"), eta_lbfgs)
     np.save(Path.joinpath(Path(save_path), "time_taken.npy"), time_taken)
+    np.save(Path.joinpath(Path(save_path), "eta_gnd.npy"), eta_gnd)
 
 if __name__ == "__main__":
     main()

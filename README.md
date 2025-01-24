@@ -32,7 +32,7 @@ pre-commit install
 ```
 
 ### 5. Run Post-Install Script
-To replace the default lbfgs.py in the Torch package with the modified version:
+To setup the framework for testing and training post-installation of the packages.
 ```
 sh post_install/post_install.sh
 ```

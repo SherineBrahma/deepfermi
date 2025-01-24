@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 
 class DatasetDCEPerfusion(Dataset):
 
-    def __init__(self, pid, im_sig, ctc, aif, time, wlen, seg, mbolus, eta_pretrain, mask_od, aug_data_dic, transform):
+    def __init__(self, pid, im_sig, ctc, aif, time, wlen, seg, eta_gnd, mbolus, eta_pretrain, mask_od, aug_data_dic, transform):
         
         self.pid = pid
         self.im_sig = im_sig
@@ -39,6 +39,7 @@ class DatasetDCEPerfusion(Dataset):
         self.time = time
         self.wlen = wlen
         self.seg = seg
+        self.eta_gnd = eta_gnd
         self.mbolus = mbolus
         self.eta_pretrain = eta_pretrain
         self.mask_od = mask_od
@@ -57,11 +58,12 @@ class DatasetDCEPerfusion(Dataset):
     def transformed_dataset(self):
         
         # Crop data
-        im_sig, ctc, aif, time, seg, eta_pretrain, mask_od = self.transform(self.im_sig, 
+        im_sig, ctc, aif, time, seg, eta_gnd, eta_pretrain, mask_od = self.transform(self.im_sig, 
                                                                             self.ctc, 
                                                                             self.aif, 
                                                                             self.time, 
                                                                             self.seg, 
+                                                                            self.eta_gnd, 
                                                                             self.eta_pretrain, 
                                                                             self.mask_od, 
                                                                             self.aug_data_dic)
@@ -73,6 +75,7 @@ class DatasetDCEPerfusion(Dataset):
                                    time, 
                                    self.wlen, 
                                    seg, 
+                                   eta_gnd,
                                    self.mbolus, 
                                    eta_pretrain, 
                                    mask_od, 
@@ -86,6 +89,7 @@ class DatasetDCEPerfusion(Dataset):
         osamp = config.train_params.osamp if hasattr(config, 'train_params') else config.test_params.osamp
         eta_bkg_ref = config.train_params.dataset.eta_bkg_ref if hasattr(config, 'train_params') else config.test_params.dataset.eta_bkg_ref
         cross_val_flag = config.train_params.cross_val_flag if hasattr(config, 'train_params') else False
+        crop_dim = config.train_params.dataset.crop_dim if hasattr(config, 'train_params') else config.test_params.dataset.crop_dim
         dtype = torch.float32
         
         # Extracting pre-processing parameters        
@@ -112,7 +116,8 @@ class DatasetDCEPerfusion(Dataset):
         aif_list = []
         time_list = []
         wlen_list = []
-        seg_list = []            
+        seg_list = []  
+        eta_gnd_list = []          
         for pid in data_dic.keys():
             # Extract data
             im_sig = torch.tensor(data_dic[pid]['im_sig'], dtype=dtype)            
@@ -120,7 +125,8 @@ class DatasetDCEPerfusion(Dataset):
             aif = torch.tensor(data_dic[pid]['aif'], dtype=dtype)
             time = torch.tensor(data_dic[pid]['time'], dtype=dtype)
             wlen = torch.tensor(data_dic[pid]['wlen'], dtype=torch.int)
-            seg = torch.tensor(data_dic[pid]['seg'], dtype=dtype)            
+            seg = torch.tensor(data_dic[pid]['seg'], dtype=dtype)
+            eta_gnd = torch.tensor(data_dic[pid]['eta'], dtype=dtype)           
             # Populating the place-holders
             pid_list.append(pid)
             im_sig_list.append(im_sig)
@@ -128,7 +134,8 @@ class DatasetDCEPerfusion(Dataset):
             aif_list.append(aif)
             time_list.append(time)
             wlen_list.append(wlen)
-            seg_list.append(seg)        
+            seg_list.append(seg)     
+            eta_gnd_list.append(eta_gnd)        
         # Stacking the list to construct tensors
         pid = pid_list
         im_sig = torch.stack(im_sig_list)
@@ -137,11 +144,14 @@ class DatasetDCEPerfusion(Dataset):
         time = torch.stack(time_list)
         wlen = torch.stack(wlen_list)
         seg = torch.stack(seg_list)
+        eta_gnd = torch.stack(eta_gnd_list)
         
         # Preprocessing steps        
         # Data-preprocessing
         # # Stacking the myocardial slices per patient
         # pid, im_sig, ctc, aif, time, wlen, seg = DatasetDCEPerfusion._stack_myo_slices(pid, im_sig, ctc, aif, time, wlen, seg)
+        # Cropping dataset
+        ctc, seg, im_sig, eta_gnd = DatasetDCEPerfusion._crop_dim(ctc, seg, im_sig, eta_gnd, crop_dim)
         # Precondition ctc background
         ctc = DatasetDCEPerfusion._precond_bkg(aif, ctc, seg, time, wlen, osamp, eta_bkg_ref, device)
         # Calculate main bolus        
@@ -174,6 +184,7 @@ class DatasetDCEPerfusion(Dataset):
                                    time, 
                                    wlen, 
                                    seg, 
+                                   eta_gnd,
                                    mbolus, 
                                    eta_pretrain, 
                                    mask_od, 
@@ -235,6 +246,55 @@ class DatasetDCEPerfusion(Dataset):
         
         return pid, im_sig, ctc, aif, time, wlen, seg
     
+    def _crop_dim(ctc, seg, im_sig, eta_gnd, crop_dim):
+        
+        # General
+        crop_dim_x, crop_dim_y = crop_dim[0], crop_dim[1]
+        nb, npar, _, _ = eta_gnd.shape
+        _, _, _, nt = im_sig.shape    
+        eta_gnd_data = torch.zeros(nb, npar, crop_dim_x, crop_dim_y, dtype= eta_gnd.dtype)
+        im_sig_data = torch.zeros(nb, crop_dim_x, crop_dim_y, nt, dtype= im_sig.dtype)
+        ctc_data = torch.zeros(nb, crop_dim_x, crop_dim_y, nt, dtype= ctc.dtype)
+        seg_data = torch.zeros(nb, crop_dim_x, crop_dim_y, dtype= seg.dtype)
+        for i in range(seg.shape[0]):
+            # Bounding box
+            # Construction
+            bbox = torch.zeros(seg[i,...].shape)
+            bbox[seg[i,...]==1]=1
+            bbox[seg[i,...]==71]=1        
+            bbox_x = bbox.sum(1)
+            bbox_y = bbox.sum(0)
+            bbox = (bbox_x.unsqueeze(1)) * (bbox_y.unsqueeze(0))
+            bbox[bbox!=0]=1
+            # Retrieving indices                      
+            xmin, xmax  = np.where(bbox_x)[0].min(), np.where(bbox_x)[0].max()
+            ymin, ymax  = np.where(bbox_y)[0].min(), np.where(bbox_y)[0].max()
+            # Padding logic
+            if (crop_dim_x-(xmax-xmin))%2==0:
+                xpad_left, xpad_right = (int((crop_dim_x - (xmax-xmin))/2), int((crop_dim_x - (xmax-xmin))/2))
+            else:
+                if (crop_dim_x-(xmax-xmin))>0:
+                    xpad_left, xpad_right = (int((crop_dim_x - (xmax-xmin))/2) + 1, int((crop_dim_x - (xmax-xmin))/2))
+                else:
+                    xpad_left, xpad_right = (int((crop_dim_x - (xmax-xmin))/2), int((crop_dim_x - (xmax-xmin))/2) - 1)
+            if (crop_dim_y-(ymax-ymin))%2==0:
+                ypad_left, ypad_right = (int((crop_dim_y - (ymax-ymin))/2), int((crop_dim_y - (ymax-ymin))/2))
+            else:
+                if (crop_dim_y-(ymax-ymin))>0:
+                    ypad_left, ypad_right = (int((crop_dim_y - (ymax-ymin))/2) + 1, int((crop_dim_y - (ymax-ymin))/2))
+                else:
+                    ypad_left, ypad_right = (int((crop_dim_y - (ymax-ymin))/2), int((crop_dim_y - (ymax-ymin))/2) - 1)
+            # Padded indices             
+            xmin, xmax  = xmin - xpad_left, xmax + xpad_right
+            ymin, ymax  = ymin - ypad_left, ymax + ypad_right            
+                                    
+            # Crop maps
+            eta_gnd_data[i, ...] = eta_gnd[i,:,xmin:xmax,ymin:ymax]
+            im_sig_data[i, ...] = im_sig[i,xmin:xmax,ymin:ymax,:]
+            ctc_data[i, ...] = ctc[i,xmin:xmax,ymin:ymax,:]
+            seg_data[i, ...] = seg[i,xmin:xmax,ymin:ymax]
+        return ctc_data, seg_data, im_sig_data, eta_gnd_data
+    
     def _precond_bkg(aif, ctc, seg, time, wlen, osamp, eta_bkg_ref, device='cuda'):
         
         # General initializing
@@ -258,7 +318,6 @@ class DatasetDCEPerfusion(Dataset):
             
             # Compensating offset in the time curves
             oTp = 5
-            # aif_bkg = F.relu(aif_bkg-aif_bkg[...,0:oTp].mean(-1, keepdim=True))
             aif_bkg = aif_bkg-aif_bkg[...,0:oTp].mean(-1, keepdim=True)
             
             # Interpolating vectors
@@ -440,22 +499,23 @@ class Transform(nn.Module):
         # General Setting
         self.aug_dataset_flag = transform_cfg.train_params.aug_dataset_flag
         
-    def __call__(self, im_sig, ctc, aif, time, seg, eta_pretrain, mask_od, aug_data_dic):
+    def __call__(self, im_sig, ctc, aif, time, seg, eta_gnd, eta_pretrain, mask_od, aug_data_dic):
         
         # General
-        eta_pretrain_aug = aug_data_dic['eta_pretrain_aug']
-        aif_aug = aug_data_dic['aif_aug']
-        mask_od_aug = aug_data_dic['mask_od_aug']
-        time_aug = aug_data_dic['time_aug']        
+        if self.aug_dataset_flag == True:
+            eta_pretrain_aug = aug_data_dic['eta_pretrain_aug']
+            aif_aug = aug_data_dic['aif_aug']
+            mask_od_aug = aug_data_dic['mask_od_aug']
+            time_aug = aug_data_dic['time_aug']        
                
-        # Avoid eta_pretrain_aug values with NaN values
-        if not hasattr(self, 'reject_list'):
-            self.reject_list = []
-            for i in range(eta_pretrain_aug.shape[0]):
-                for j in range(eta_pretrain_aug.shape[0]):
-                    if torch.isnan((eta_pretrain_aug[i,j].sum())):
-                        print('Reject List: i = ' + str(i) + ', j =' + str(j) + ', value = ' + str((eta_pretrain_aug[i,j].sum()).item()))
-                        self.reject_list.append((i, j))
+            # Avoid eta_pretrain_aug values with NaN values
+            if not hasattr(self, 'reject_list'):
+                self.reject_list = []
+                for i in range(eta_pretrain_aug.shape[0]):
+                    for j in range(eta_pretrain_aug.shape[0]):
+                        if torch.isnan((eta_pretrain_aug[i,j].sum())):
+                            print('Reject List: i = ' + str(i) + ', j =' + str(j) + ', value = ' + str((eta_pretrain_aug[i,j].sum()).item()))
+                            self.reject_list.append((i, j))
                         
         # Apply data-augumentation
         N_train = im_sig.shape[0]
@@ -469,6 +529,7 @@ class Transform(nn.Module):
                 ctc[i] = hfilp(TF.rotate(ctc[i].moveaxis(-1, -3), angle=rot_angle)).moveaxis(-3, -1)
                 seg[i] = hfilp(TF.rotate(seg[i].unsqueeze(0), angle=rot_angle))
                 eta_pretrain[i] = hfilp(TF.rotate(eta_pretrain[i], angle=rot_angle))
+                eta_gnd[i] = hfilp(TF.rotate(eta_gnd[i], angle=rot_angle))
                 if self.aug_dataset_flag == True:
                     eta_pretrain_aug[i] = hfilp(TF.rotate(eta_pretrain_aug[i], angle=rot_angle))
                     aug_indx[i] = np.random.randint(0, N_train)
@@ -482,7 +543,7 @@ class Transform(nn.Module):
                 time = time_aug[indx,aug_indx].clone()            
                 mask_od = mask_od_aug[indx,aug_indx].clone()
         
-        return im_sig, ctc, aif, time, seg, eta_pretrain, mask_od
+        return im_sig, ctc, aif, time, seg, eta_gnd, eta_pretrain, mask_od
     
 def collate(batch):
     return BatchRadCineSENSE2D(batch)

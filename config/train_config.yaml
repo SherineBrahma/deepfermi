@@ -2,7 +2,7 @@
 
 # General Information
 info:
-  project_name: 01_manual_train
+  project_name: Debug
   project_description: Developing Code
 
 # Directory paths
@@ -14,8 +14,8 @@ paths:
 train_params:
   # Dataset specific
   dataset:
-    file_name: dce_perfusion_data.npz # invivo_perfusion_data.npz # 
-    build_dataset_flag: False
+    file_name: dce_perfusion_data.npz 
+    build_dataset_flag: False 
     SNR_ctc: 15
     img_dim: [120, 120]
     crop_dim: [60, 60]
@@ -31,35 +31,35 @@ train_params:
     learn_lambda: True
     dropout: 0.0
     # Data-consistency configurations
-    osamp: 20
+    osamp: 5
     nu: 1
-    max_iter_lbfgs: 10000
-    max_eval_lbfgs: 10000
+    max_iter_lbfgs: 500
+    max_eval_lbfgs: 500
     # Check-pointing
-    train_from_ckpt: False
+    train_from_ckpt: True
     load_unet: unet_load
     backprop_ckpt: 0
   # Optimizer configurations
   optimizer:
-    unet_lr: 10.e-5
+    unet_lr: 10.e-4
     unet_wd: 10.e-12
   # General 
-  ntrain: ['Pat0', 'Pat1', 'Pat2'] # ['56', '75', '109'] # 
-  nval: ['Pat3'] # ['46'] # 
-  ntest: ['Pat4'] # ['36'] # 
-  nepochs: 5883 # 348 # 695 # 1 # 
+  ntrain: ['Pat0', 'Pat1', 'Pat2']
+  nval: ['Pat3']
+  ntest: ['Pat4']
+  nepochs: 2000
   val_step_size: 500
   mb: 1
   ssup_split: 0.3
-  mode: 'pre_training' # 'pre_training' 'fine_tuning'
+  mode: 'fine_tuning' # 'pre_training' 'fine_tuning'
   # Fermi Operator
   osamp: 20
   pre_scale_factor: 10
   # Backend device
   device: 'cuda'
   # Cross validation
-  cross_val_flag: True
+  cross_val_flag: False
   cross_val_k: 2
   cross_val_fold: 1
   # Augment training dataset
-  aug_dataset_flag: True
+  aug_dataset_flag: True 
