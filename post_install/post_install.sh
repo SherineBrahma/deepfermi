@@ -15,5 +15,5 @@ cp post_install/modified_lbfgs.py $modified_lbfgs_path
 
 # Setup pretrained network
 # # Create and copy pretrained deepfermi
-mkdir -p $deepfermi_home_dir/experiments/01_deepfermi_pretrained
+mkdir -p $deepfermi_home_dir/experiments/01_01_deepfermi_pretrained
 cp $deepfermi_home_dir/post_install/deepfermi_pretrained $deepfermi_home_dir/experiments/01_01_deepfermi_pretrained/unet

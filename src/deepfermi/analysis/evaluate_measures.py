@@ -92,8 +92,8 @@ def main(pdf_name_list,
 if __name__ == "__main__":
     
     # Folders to be read    
-    pdf_name_list = ['outlier_removed', 'outlier_retained']
+    pdf_name_list = ['outlier_retained', 'outlier_removed']
     img_sub_dir_list = ['eta_outlier_removed', 'eta_outlier_retained']
-    read_path = ['01_02_test_deepfermi_pretrained_outlier_removed', '01_03_test_deepfermi_pretrained_outlier_retained']
+    read_path = ['01_02_test_deepfermi_pretrained_outlier_retained', '01_03_test_deepfermi_pretrained_outlier_removed']
     save_path = '01_04_test_deepfermi_pretrained'
     main(pdf_name_list, img_sub_dir_list, read_path, save_path)

@@ -31,12 +31,6 @@ To automatically run pre-commit hooks (like linting) before each commit, install
 pre-commit install
 ```
 
-### 5. Run Post-Install Script
-To setup the framework for testing and training post-installation of the packages.
-```
-sh post_install/post_install.sh
-```
-
 ## Usage
 
 ### Step 1: Generate DCE Perfusion Data
@@ -54,27 +48,32 @@ Note: Only five cardiac slices are provided in this repository for training, val
 #### Option 1: Test a Pre-Trained Network
 If you would like to test a pre-trained network (without training it yourself), you can directly run the following command:
 ```
-python src/deepfermi/test.py
+sh script/test_job_queue.sh
 ```
-This will load the pre-trained model and run the test as per the configuration in test.yaml.
+This script will:
+
+1. Load the pre-trained model.
+2. Test the model in two scenarios:
+  * With motion artifacts.
+  * Without motion artifacts.
+3. Generate the required output arrays.
+
+After testing, you can analyze the output arrays in different ways:
+
+  *  Visualize the results by running:
+```
+ python src/deepfermi/analysis/generate_img.py
+```
+  *  Evaluate performance metrics by running:
+```
+ python src/deepfermi/analysis/evaluate_measures.py
+```
+You can also write your scripts to analyze the arrays.
 
 #### Option 2: Train the Network from Scratch
 If you would prefer to train the network from scratch, you can do so after generating the data by running:
 
 ```
-python src/deepfermi/main.py
+sh script/train_job_queue.sh
 ```
-The main.py will read the training configuration from the ```/config/train.yaml``` file. Subsequently, for testing the trained model, you can run run the following command:
-```
-python src/deepfermi/test.py
-```
-
-
-
-
-
-
-
-
-
-
+After training the model, you can proceed with testing it. However, keep in mind that the training data provided in this repository is quite small and intended primarily for code demonstration purposes, so the model's performance might not be optimal.
