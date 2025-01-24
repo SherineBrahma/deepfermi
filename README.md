@@ -54,8 +54,8 @@ This script will:
 
 1. Load the pre-trained model.
 2. Test the model in two scenarios:
-  * With motion artifacts.
-  * Without motion artifacts.
+   * With motion artifacts.
+   * Without motion artifacts.
 3. Generate the required output arrays.
 
 After testing, you can analyze the output arrays in different ways:
