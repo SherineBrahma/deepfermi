@@ -31,6 +31,12 @@ To automatically run pre-commit hooks (like linting) before each commit, install
 pre-commit install
 ```
 
+### 5. Run Post-Install Script
+To setup the framework for testing and training post-installation of the packages.
+```
+sh post_install/post_install.sh
+```
+
 ## Usage
 
 ### Step 1: Generate DCE Perfusion Data
