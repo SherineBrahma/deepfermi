@@ -1,30 +1,26 @@
-from typing import Dict
 import itertools
+import random
+import time as exe_time
+from pathlib import Path
+from typing import Dict
 
 import cv2
-from einops import rearrange
-from pathlib import Path
-import numpy as np
-import random
-from termcolor import colored
-import time as exe_time
-from tqdm import tqdm
-from tqdm import trange
-
 import dataio
-from fermi import convolve, fermi_ir_func, FermiLBFGSSolver, shift_aif
-from utils import Interp_Linear_1D
-from sklearn.model_selection import KFold
-
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import Dataset
-import torchvision.transforms.functional as TF
 import torchvision.transforms as T
-
-import matplotlib
-import matplotlib.pyplot as plt
+import torchvision.transforms.functional as TF
+from einops import rearrange
+from fermi import FermiLBFGSSolver, convolve, fermi_ir_func, shift_aif
+from sklearn.model_selection import KFold
+from termcolor import colored
+from torch.utils.data import Dataset
+from tqdm import tqdm, trange
+from utils import Interp_Linear_1D
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Data Loading %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -192,7 +188,7 @@ class DatasetDCEPerfusion(Dataset):
                                    transform)
         
     @staticmethod
-    def _update_precond_bkg_ref(dataset, config, aug_dataset_flag=False, device='cuda'):
+    def update_precond_bkg_ref(dataset, config, aug_dataset_flag=False, device='cuda'):
         
         # General settings
         osamp = config.train_params.osamp if hasattr(config, 'train_params') else config.test_params.osamp

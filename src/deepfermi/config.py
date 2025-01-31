@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from pathlib import Path
 from dataclasses import dataclass, field, is_dataclass
 from enum import Enum
+from pathlib import Path
 from typing import Any, Dict, List, Type
 
 import yaml
 from prettytable import PrettyTable
 from typeguard import check_type
+
 
 def construct_yaml_obj(obj: Type, data: Dict[str, Any]):
     
@@ -168,7 +169,7 @@ class TestParams:
     pre_scale_factor: int = 10
     nsamp: int = 1
     calib_nsamp: int = 1
-    ntest: List[str] = field(default_factory=lambda: ['P3'])    
+    ntest: List[str] = field(default_factory=lambda: ['P3'])
     clean_outliers: bool = False
     morph_flag: bool = False
     is_erosion_not_dilate: bool = True
