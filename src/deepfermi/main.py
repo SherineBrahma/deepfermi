@@ -30,7 +30,7 @@ def parse_override_arguments() -> argparse.Namespace:
     parser.add_argument('--project_name', default=None, type=str)
     parser.add_argument('--read_project_name', default=None, type=str)
     parser.add_argument('--dataset_file_name', default=None, type=str)
-    parser.add_argument('--mode', default=None, type=str)
+    parser.add_argument('--mode', default=None, type=Mode)
     parser.add_argument('--cross_val_k', default=None, type=int)
     parser.add_argument('--cross_val_fold', default=None, type=int)
     parser.add_argument('--unet_lr', default=None, type=float)
@@ -85,8 +85,8 @@ def read_cfg(config_path, override_args) -> TrainConfig:
         or cfg.train_params.dataset.build_dataset_flag
         )
     cfg.train_params.mode = (
-        Mode(override_args.mode)
-        or Mode(cfg.train_params.mode.value)
+        override_args.mode
+        or cfg.train_params.mode
         )
     cfg.train_params.network.train_from_ckpt = (
         override_args.train_from_ckpt
@@ -168,7 +168,7 @@ def load_dataset_obj(cfg) -> Tuple[DatasetDCEPerfusion, DatasetDCEPerfusion]:
                                            'train_dataset.pkl')
         val_dataset_path = Path.joinpath(Path(cfg.paths.dataset),
                                          'val_dataset.pkl')
-    if build_dataset == True:
+    if build_dataset is True:
         transform = Transform(cfg)
         train_dataset = DatasetDCEPerfusion.construct_from_npz(
             file_path,
@@ -208,20 +208,19 @@ def load_dataset_obj(cfg) -> Tuple[DatasetDCEPerfusion, DatasetDCEPerfusion]:
     return train_dataset, val_dataset
 
 
-def main() -> None:
-    """_summary_
+def load_network(cfg) -> DeepFermi:
     """
-    # Reading arguments for overriding config file
-    override_args = parse_override_arguments()
+    Loads DeepFermi network model from a configuration and checkpoint if
+    provided.
 
-    # Building configuration object
-    config_path = 'config/train_config.yaml'
-    cfg = read_cfg(config_path, override_args)
+    Parameters:
+        cfg (TrainConfig): The configuration object containing network
+                            parameters and checkpoint settings.
 
-    # Load dataset object
-    train_dataset, val_dataset = load_dataset_obj(cfg)
+    Returns:
+        DeepFermi: The constructed and optionally loaded neural network model.
+    """
 
-    # Network Initialization
     cnn = Unet(
         dim=3,
         ncin=cfg.train_params.network.ncin,
@@ -244,7 +243,7 @@ def main() -> None:
 
     # Load Network from checkpoint
     network_path = Path.joinpath(Path(cfg.paths.save), cfg.info.project_name)
-    if cfg.train_params.network.train_from_ckpt == True:
+    if cfg.train_params.network.train_from_ckpt is True:
         print('Loading network...')
         load_unet = cfg.train_params.network.load_unet
         unet_state_dic = torch.load(Path.joinpath(network_path, load_unet))
@@ -253,20 +252,62 @@ def main() -> None:
         unet_state_dic.pop('max_eval_lbfgs')
         unet.load_state_dict(unet_state_dic, strict=False)
 
-    # Initialization of the unit that controls different components while training
-    tm = TrainingManager(cfg, train_dataset, val_dataset, unet)
+    return unet
+
+
+def record_train_params(cfg, unet) -> None:
+    """
+    Records training configuration and network parameters in text files.
+
+    Parameters:
+        cfg (TrainConfig): The configuration object containing paths,
+                           settings, and training parameters.
+        unet (DeepFermi): The network model for which the parameters will
+                          be recorded.
+    """
 
     # Record training configurations
     save_path = Path.joinpath(Path(cfg.paths.save), cfg.info.project_name)
     save_file = Path.joinpath(save_path, 'train_config.yaml')
-    with open(save_file, 'w') as file:
+    with open(save_file, 'w', encoding='utf-8') as file:
         yaml.dump(cfg.yaml_config, file, default_flow_style=None)
     save_file = Path.joinpath(save_path, 'network_params.txt')
-    with open(save_file, 'w') as file:
+    with open(save_file, 'w', encoding='utf-8') as file:
         table, total_params = cfg.train_params.network.parameters(unet)
-        file.write(unet._get_name() + ' parameter breakdown:\n')
+        file.write('DeepFermi parameter breakdown:\n')
         file.write(str(table))
         file.write(f'\n Total Trainable Params: {total_params} \n')
+
+
+def main() -> None:
+    """
+    Executes the full training pipeline: parses arguments, loads
+    configuration, initializes datasets and the network, records
+    parameters, and starts training.
+
+    Returns:
+        None
+    """
+
+    # Reading arguments for overriding config file
+    override_args = parse_override_arguments()
+
+    # Building configuration object
+    config_path = 'config/train_config.yaml'
+    cfg = read_cfg(config_path, override_args)
+
+    # Initialize dataset object
+    train_dataset, val_dataset = load_dataset_obj(cfg)
+
+    # Initialize network
+    unet = load_network(cfg)
+
+    # Record training configurations
+    record_train_params(cfg, unet)
+
+    # Initialization of the unit that controls different
+    # components while training
+    tm = TrainingManager(cfg, train_dataset, val_dataset, unet)
 
     # Start training
     print('Training Started')

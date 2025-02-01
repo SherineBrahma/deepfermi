@@ -11,48 +11,82 @@ from typeguard import check_type
 
 
 def construct_yaml_obj(obj: Type, data: Dict[str, Any]):
-    
+    """
+    Constructs an object from a dictionary of data, setting its attributes
+    based on the provided values.
+
+    Recursively constructs dataclass attributes and assigns values, checking
+    types for each attribute. If an enum is encountered, the corresponding
+    enum value is assigned.
+
+    Parameters:
+        obj (Type): The target object type (dataclass or class).
+        data (Dict[str, Any]): A dictionary where keys are attribute names
+                               and values are data to set.
+
+    Returns:
+        Type: The object with attributes set from the data.
+
+    Raises:
+        KeyError: If an unexpected key is found in data.
+        TypeError: If the type of a value does not match the expected type.
+    """
+
     field_types = obj.__dict__
     constructor_args = {}
-    
     for key, value in data.items():
-        
+
         if key in field_types:
             expected_type = field_types[key]
             if is_dataclass(expected_type):
-                # If the expected type is a data class (and not a direct type like int, str, etc.)
-                constructor_args[key] = construct_yaml_obj(expected_type, value)
+                # If the expected type is a data class (and not a direct type
+                # like int, str, etc.)
+                constructor_args[key] = construct_yaml_obj(expected_type,
+                                                           value)
             else:
                 if not isinstance(expected_type, Enum):
-                    try:                           
+                    try:
                         check_type(value, type(expected_type))
-                        obj.__setattr__(key, value)
-                    except Exception as e:
-                        error_message = 'Error: expected type of ' + key + ' is ' + type(expected_type).__name__ + ', got ' + type(value).__name__ + '.'
-                        raise TypeError(error_message)      
+                        setattr(obj, key, value)
+                    except Exception as exc:
+                        error_message = ('Error: expected type of ' +
+                                         key +
+                                         ' is ' +
+                                         type(expected_type).__name__ +
+                                         ', got ' +
+                                         type(value).__name__ +
+                                         '.')
+                        raise TypeError(error_message) from exc
                 else:
-                            obj.__setattr__(key, eval(type(expected_type).__name__ )(value))
+                    setattr(obj,
+                            key,
+                            eval(type(expected_type).__name__)(value))
         else:
-            raise KeyError(f"Unexpected key '{key}' for class '{type(obj).__name__}'")
-    
+            raise KeyError(f"Unexpected key '{key}'" +
+                           "for class '{type(obj).__name__}'")
+
     return obj
+
 
 @dataclass
 class GeneralInfo:
     project_name: str = 'Debug'
     read_project_name: str = ''
     project_description: str = 'Developing Code'    
-    
+
+
 @dataclass
 class Paths:
-    dataset: str = str(Path(__file__).resolve().parent.parent.parent / 'src/deepfermi/data/')
-    read: str = str(Path(__file__).resolve().parent.parent.parent / 'src/deepfermi/Experiments/')
-    save: str = str(Path(__file__).resolve().parent.parent.parent / 'src/deepfermi/Experiments/')
-        
+    home_dir = str(Path(__file__).resolve().parent.parent.parent)
+    dataset: str = home_dir / 'src/deepfermi/data/'
+    read: str = home_dir / 'src/deepfermi/Experiments/'
+    save: str = home_dir / 'src/deepfermi/Experiments/'
+
     def __setattr__(self, attr, val):
         val = str(Path(__file__).resolve().parent.parent.parent / val)
         super(Paths, self).__setattr__(attr, val)
-    
+
+
 @dataclass
 class Dataset:
     file_name: str = 'dataset'
@@ -60,22 +94,26 @@ class Dataset:
     SNR_ctc: int = 15
     img_dim: List[int] = field(default_factory=lambda: [120, 120])
     crop_dim: List[int] = field(default_factory=lambda: [120, 120])
-    eta_bkg_ref: List[int] = field(default_factory=lambda: [0.001667, 0.0, 0.01])
+    eta_bkg_ref: List[int] = field(default_factory=lambda: [0.001667,
+                                                            0.0, 0.01])
+
 
 class Mode(Enum):
     PRE_TRAINING = 'pre_training'
     FINE_TUNING = 'fine_tuning'
     TESTING = 'testing'
-    
+
+
 class Device(Enum):
     CUDA = 'cuda'
     CPU = 'cpu'
 
+
 @dataclass
-class Network:    
+class Network:
     # Architecture
     ncin: int = 2
-    nfilters: int = 16    
+    nfilters: int = 16
     nstage: int = 3
     nconv_stage: int = 2
     ncout: int = 2
@@ -101,11 +139,13 @@ class Network:
             table.add_row([name, param])
             total_params += param
         return table, total_params
-    
+
+
 @dataclass
 class Optimizer:
     unet_lr: float = 10.e-4
     unet_wd: float = 10.e-12
+
 
 @dataclass
 class TrainParams:
@@ -130,35 +170,57 @@ class TrainParams:
     osamp: int = 5
     pre_scale_factor: int = 10
 
+
 @dataclass
 class TrainConfig:
+    """
+    Holds the configuration for training, including paths, parameters, and
+    YAML data.
+
+    Attributes:
+        info (GeneralInfo): Information about the training.
+        paths (Paths): File paths related to datasets and outputs.
+        train_params (TrainParams): Training parameters.
+        yaml_config (Optional[dict]): The loaded YAML configuration.
+
+    Methods:
+        from_yaml(config_path: str) -> TrainConfig: Loads configuration from
+                                       a YAML file.
+        update_yaml() -> None: Updates `yaml_config` based on the object's
+                               attributes.
+        __str__() -> str: Returns a string representation of the YAML
+                          configuration.
+    """
+
     info: GeneralInfo = GeneralInfo()
     paths: Paths = Paths()
     train_params: TrainParams = TrainParams()
     yaml_config: dict | None = None
-    
+
     @classmethod
     def from_yaml(cls, config_path: str) -> TrainConfig:
-        
-        config_path = str(Path(__file__).resolve().parent.parent.parent / "config/train_config.yaml")
-        with open(Path(config_path), "r") as stream:
+
+        home_dir = Path(__file__).resolve().parent.parent.parent
+        config_path = str(home_dir / "config/train_config.yaml")
+        with open(Path(config_path), "r", encoding="utf-8") as stream:
             try:
                 yaml_config = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
-                print(exc)            
+                print(exc)
         instance = construct_yaml_obj(cls, yaml_config)()
         instance.yaml_config = yaml_config
-           
+
         return instance
-    
-    def update_yaml(self):
+
+    def update_yaml(self) -> None:
         yaml_config_temp = self.__dict__.copy()
         del yaml_config_temp['yaml_config']
         self.yaml_config = dict(yaml_config_temp)
-    
-    def __str__(self):
+
+    def __str__(self) -> str:
         return yaml.dump(self.yaml_config, default_flow_style=None)
-    
+
+
 @dataclass
 class TestParams:
     dataset: Dataset = Dataset()
@@ -173,28 +235,42 @@ class TestParams:
     clean_outliers: bool = False
     morph_flag: bool = False
     is_erosion_not_dilate: bool = True
-    
+
+
 @dataclass
 class TestConfig:
-    # General
+    """
+    Holds configuration for testing, including general info, paths, and test
+    parameters.
+
+    Attributes:
+        info (GeneralInfo): General information for the test.
+        paths (Paths): File paths for datasets and outputs.
+        test_params (TestParams): Testing parameters.
+
+    Methods:
+        from_yaml(config_path: str) -> TestConfig: Loads configuration from a
+                                                   YAML file.
+        __str__() -> str: Returns a string representation of the YAML
+                          configuration.
+    """
+
     info: GeneralInfo = GeneralInfo()
-    # Paths
     paths: Paths = Paths()
-    # Paths
     test_params: TestParams = TestParams()
-    
+
     @classmethod
     def from_yaml(cls, config_path: str) -> TestConfig:
-        
-        with open(Path(config_path), "r") as stream:
+
+        with open(Path(config_path), "r", encoding="utf-8") as stream:
             try:
                 yaml_config = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 print(exc)            
         instance = construct_yaml_obj(cls, yaml_config)()
         instance.yaml_config = yaml_config
-           
+
         return instance
-    
-    def __str__(self):
+
+    def __str__(self) -> str:
         return yaml.dump(self.yaml_config, default_flow_style=None)
