@@ -78,9 +78,9 @@ class GeneralInfo:
 @dataclass
 class Paths:
     home_dir = str(Path(__file__).resolve().parent.parent.parent)
-    dataset: str = home_dir / 'src/deepfermi/data/'
-    read: str = home_dir / 'src/deepfermi/Experiments/'
-    save: str = home_dir / 'src/deepfermi/Experiments/'
+    dataset: str = home_dir + '/src/deepfermi/data/'
+    read: str = home_dir + '/src/deepfermi/Experiments/'
+    save: str = home_dir + '/src/deepfermi/Experiments/'
 
     def __setattr__(self, attr, val):
         val = str(Path(__file__).resolve().parent.parent.parent / val)

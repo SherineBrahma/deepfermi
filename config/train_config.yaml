@@ -36,7 +36,7 @@ train_params:
     max_iter_lbfgs: 500
     max_eval_lbfgs: 500
     # Check-pointing
-    train_from_ckpt: True
+    train_from_ckpt: False
     load_unet: unet_load
     backprop_ckpt: 0
   # Optimizer configurations
