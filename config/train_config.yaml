@@ -15,7 +15,7 @@ train_params:
   # Dataset specific
   dataset:
     file_name: dce_perfusion_data.npz 
-    build_dataset_flag: False 
+    build_dataset_flag: True 
     SNR_ctc: 15
     img_dim: [120, 120]
     crop_dim: [60, 60]

@@ -18,7 +18,7 @@ warnings.filterwarnings("ignore")
 
 class TrainingManager():
     """
-    Manages the training and evaluation process of a neural network.
+    Manages the training and evaluation process of DeepFermi.
     """
 
     def __init__(self,
@@ -28,7 +28,8 @@ class TrainingManager():
                  unet
                  ):
         """
-        Initializes the training manager with configurations.
+        Initializes the training manager with configuration parameters for the
+        training process.
         """
 
         # Training Parameter Dictionary
@@ -38,7 +39,6 @@ class TrainingManager():
         self.save_path = cfg.paths.save
         self.unet = unet
         self.device = cfg.train_params.device.value
-        # self.aug_dataset_flag = self.cfg.train_params.aug_dataset_flag
 
         # Fermi operator parameters
         self.fermi_params = {}
@@ -150,7 +150,7 @@ class TrainingManager():
         # Make mini-batch size available to the object
         mb = self.cfg.train_params.mb
 
-        # the number of existing mini-batches of size mb (floor in order to
+        # The number of existing mini-batches of size mb (floor in order to
         # avoid to access indices which do not exist;)
         nepochs = self.cfg.train_params.nepochs
         nmb = np.int(np.floor(N_train / mb))
@@ -192,6 +192,7 @@ class TrainingManager():
                 seg_batch = batch.seg.to(self.device)
                 mbolus_batch = batch.mbolus.to(self.device)
                 eta_pretrain_batch = batch.eta_pretrain.to(self.device)
+                mask_od_batch = batch.mask_od
 
                 # Number of time points
                 Idst = np.arange(wlen_batch)
@@ -200,6 +201,9 @@ class TrainingManager():
                 ssup_split = self.cfg.train_params.ssup_split
                 np.random.shuffle(Idst)
                 indx_nn = np.sort(Idst[0:int(ssup_split*indx_len)])
+                indx_nn = np.setdiff1d(
+                    indx_nn, (mask_od_batch == 0).nonzero()[:, 1]
+                    )
                 indx_dc = np.sort(Idst[int(ssup_split*indx_len):-1])
 
                 # Evaluation of network and recording of training parameters
@@ -223,7 +227,7 @@ class TrainingManager():
                         self.tracker.save_samp_plot(train_dataset_to_load,
                                                     self.unet)
 
-                # measure time to get an estimate of how long the training
+                # Measure time to get an estimate of how long the training
                 # will last
                 t0_bp = exec_time.time()
 
