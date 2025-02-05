@@ -115,15 +115,14 @@ def read_cfg(config_path, override_args) -> TrainConfig:
     cfg.update_yaml()
 
     # Preliminary checks
-    if cfg.train_params.mode.value == 'fine_tuning':
-        msg = (
-            "Only mode allowed during testing "
-            "is 'pre_training' and 'fine_tuning'"
-            )
-        assert cfg.train_params.mode.value in [
-            'pre_training',
-            'fine_tuning',
-        ], msg
+    msg = (
+        "Only mode allowed during training "
+        "is 'pre_training' and 'fine_tuning'"
+        )
+    assert cfg.train_params.mode.value in [
+        'pre_training',
+        'fine_tuning',
+    ], msg
 
     return cfg
 
