@@ -15,7 +15,7 @@ train_params:
   # Dataset specific
   dataset:
     file_name: dce_perfusion_data.npz 
-    build_dataset_flag: True 
+    build_dataset_flag: False 
     SNR_ctc: 15
     img_dim: [120, 120]
     crop_dim: [60, 60]
@@ -32,7 +32,6 @@ train_params:
     dropout: 0.0
     # Data-consistency configurations
     osamp: 5
-    nu: 1
     max_iter_lbfgs: 500
     max_eval_lbfgs: 500
     # Check-pointing

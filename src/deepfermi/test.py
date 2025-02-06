@@ -199,7 +199,6 @@ def load_network(test_cfg, cfg) -> DeepFermi:
                bias=False)
     unet = DeepFermi(cnn,
                      osamp=cfg.train_params.network.osamp,
-                     nu=cfg.train_params.network.nu,
                      max_iter_lbfgs=cfg.train_params.network.max_iter_lbfgs,
                      max_eval_lbfgs=cfg.train_params.network.max_eval_lbfgs,
                      mode=test_cfg.test_params.mode.value,

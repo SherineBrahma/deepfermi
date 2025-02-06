@@ -183,7 +183,7 @@ def induce_outliers(ctc,
     mask_indx = torch.randint(0,
                               im_sig.shape[-1],
                               (max_outliers,))
-    
+
     # Bounding box area
     bbox = torch.zeros(seg.shape, device=device)
     bbox[seg == 1] = 1
@@ -193,7 +193,7 @@ def induce_outliers(ctc,
     bbox = (bbox_x.unsqueeze(1)) * (bbox_y.unsqueeze(0))
     bbox[bbox != 0] = 1
     bbox_xlen, bbox_ylen = bbox.sum(0).max(), bbox.sum(1).max()
-    
+
     # Translating affected frames
     # pylint: disable=not-callable
     myo_seg = torch.zeros(seg.shape, device=device)
