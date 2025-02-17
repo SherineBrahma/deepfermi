@@ -1,7 +1,6 @@
 # DeepFermi
 A deep learning framework for quantifying MR myocardial perfusion
 
-### Here is an introduction video:
 <video width="320" height="240" controls>
   <source src="media/introduction_pitch.mp4" type="video/mp4">
   Your browser does not support the video tag.
