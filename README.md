@@ -77,6 +77,8 @@ After testing, you can analyze the output arrays in different ways:
 ```
  python src/deepfermi/analysis/generate_img.py
 ```
+![Results Image](media/results.png)
+
   *  Evaluate performance metrics by running:
 ```
  python src/deepfermi/analysis/evaluate_measures.py
