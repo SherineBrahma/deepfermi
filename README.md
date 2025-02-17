@@ -56,6 +56,8 @@ python src/deepfermi/data_generation.py
 
 This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the data folder. You can customize the relevant parameters for generating data in ```data_generation.py```.
 
+![Simulation Dataset](media/simulation_dataset.gif)
+
 Note: Only five cardiac slices are provided in this repository for training, validation, and testing.
 
 ### Step 2: Choose Your Option
