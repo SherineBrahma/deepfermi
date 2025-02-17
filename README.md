@@ -1,14 +1,7 @@
 # DeepFermi
 A deep learning framework for quantifying MR myocardial perfusion
 
-<video width="320" height="240" controls>
-  <source src="media/introduction_pitch.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
-
 ![Static Badge](https://img.shields.io/badge/PyTorch-%23EE4C2C?style=for-the-badge&logo=pytorch&labelColor=black&color=%23EE4C2C)
-
 
 https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
 
@@ -59,6 +52,7 @@ python src/deepfermi/data_generation.py
 This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the data folder. You can customize the relevant parameters for generating data in ```data_generation.py```.
 
 ![Simulation Dataset](media/simulation_dataset.gif)
+<img src="media/simulation_dataset.gif" width="400" height="auto">
 
 Note: Only five cardiac slices are provided in this repository for training, validation, and testing.
 
