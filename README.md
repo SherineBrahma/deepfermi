@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
 ### Network Architecture
 
 <div align="center">
-  <img src="media/network_architecture.png" width="400" height="auto">
+  <img src="media/network_architecture.png" width="600" height="auto">
 </div>
 
 # Installation
