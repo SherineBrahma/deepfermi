@@ -3,6 +3,12 @@ A deep learning framework for quantifying MR myocardial perfusion
 
 ![Static Badge](https://img.shields.io/badge/PyTorch-%23EE4C2C?style=for-the-badge&logo=pytorch&labelColor=black&color=%23EE4C2C)
 
+
+
+https://github.com/user-attachments/assets/ca51a5f8-5817-4a3a-a8bf-ee64309aba7e
+
+
+
 ## Installation
 
 ### 1. Clone the repository
