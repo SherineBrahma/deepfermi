@@ -1,11 +1,11 @@
 # DeepFermi
-A deep learning framework for quantifying MR myocardial perfusion
+A self-supervised deep learning framework that integrates the Fermi model for fast, accurate, robust, and data-consistent myocardial quantification.
 
 [Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation)
 
 https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
 
-Contribution: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
+**Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
 # Installation
 
