@@ -7,6 +7,12 @@ https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
 
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
+# Network Architecture
+
+<div align="center">
+  <img src="media/network_architecture.png" width="700" height="auto">
+</div>
+
 # Installation
 
 ## 1. Clone the repository
