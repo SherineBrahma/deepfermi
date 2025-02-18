@@ -6,43 +6,26 @@ A deep learning framework for quantifying MR myocardial perfusion
 https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
 
 
-## Installation
+# Installation
 
-### 1. Clone the repository
-Clone the repository to your local machine
+## 1. Clone the repository
+Clone the repository and create a new Python environment with Python 3.8 (e.g. using conda):
 ```
 git clone https://github.com/SherineBrahma/deepfermi.git
-```
-
-### 2. Set Up a Python Environment
-Create a new environment with Python 3.8 (e.g. using conda) and activate it:
-``` 
 conda create -n deepfermi python=3.8
 conda activate deepfermi
 ```
 
-### 3. Install Dependencies
-Install DeepFermi in editable mode along with linting and testing dependencies:
-```
+## 2. Install DeepFermi and dependencies
+Install DeepFermi in editable mode along with necessary tools for linting, testing, and post-install setup:
+``` 
 pip install -e ".[lint,test]"
-```
-This command will install DeepFermi and necessary tools for code linting and running tests.
-
-### 4. Setup Pre-Commit Hook
-To automatically run pre-commit hooks (like linting) before each commit, install the hooks:
-```
-pre-commit install
-```
-
-### 5. Run Post-Install Script
-To setup the framework for testing and training post-installation of the packages.
-```
 sh post_install/post_install.sh
 ```
 
-## Usage
+# Usage
 
-### Step 1: Generate DCE Perfusion Data
+## Simulated DCE Perfusion Data Generation
 Before proceeding with training or testing, you first need to generate the DCE perfusion data. This can be done by running the ```data_generation.py``` script using the XCAT phantom file provided:
 
 ```
@@ -57,8 +40,7 @@ This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the dat
 
 Note: Only five cardiac slices are provided in this repository for training, validation, and testing.
 
-### Step 2: Choose Your Option
-#### Option 1: Test a Pre-Trained Network
+## Pre-Trained Model
 If you would like to test a pre-trained network (without training it yourself), you can directly run the following command:
 ```
 sh script/test_job_queue.sh
@@ -85,10 +67,34 @@ After testing, you can analyze the output arrays in different ways:
 ```
 You can also write your scripts to analyze the arrays.
 
-#### Option 2: Train the Network from Scratch
+## Train DeepFermi from Scratch
 If you would prefer to train the network from scratch, you can do so after generating the data by running:
 
 ```
 sh script/train_job_queue.sh
 ```
 After training the model, you can proceed with testing it. However, keep in mind that the training data provided in this repository is quite small and intended primarily for code demonstration purposes, so the model's performance might not be optimal.
+
+# Contribution
+
+## How to Contribute
+1. Fork the repo and create a new branch.
+2. Make changes and test them locally.
+3. Submit a pull request with your changes.
+
+## Pre-commit Hooks (Optional)
+To automatically run linting before each commit, run:
+
+```
+pip install pre-commit
+pre-commit install
+```
+
+## Running Tests
+Run tests before submitting a pull request:
+```
+pytest  
+```
+
+## Issues and Feedback
+If you encounter any issues, feel free to open an issue on GitHub.
