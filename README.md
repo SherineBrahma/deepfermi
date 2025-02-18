@@ -1,11 +1,11 @@
 # DeepFermi
 A deep learning framework for quantifying MR myocardial perfusion
 
+[Paper](https://ieeexplore.ieee.org/document/10731565)|
+
 ![Static Badge](https://img.shields.io/badge/PyTorch-%23EE4C2C?style=for-the-badge&logo=pytorch&labelColor=black&color=%23EE4C2C)
 
 https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
-
-<video src='/media/introduction_pitch.mp4' />
 
 
 # Installation
