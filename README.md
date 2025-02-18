@@ -1,7 +1,7 @@
 # DeepFermi
 A deep learning framework for quantifying MR myocardial perfusion
 
-[Paper](https://ieeexplore.ieee.org/document/10731565) |
+[Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation).
 
 https://github.com/user-attachments/assets/0f04b6d3-ca0a-4f88-a6e6-d98361f9ed24
 
@@ -101,3 +101,19 @@ pytest
 
 ## Issues and Feedback
 If you encounter any issues, feel free to open an issue on GitHub.
+
+# Citation
+
+<a id="bibtex-citation"></a>
+
+If you would like to cite this work, here is the BibTeX entry:
+
+```bibtex
+@article{brahma2024robust,
+  title={Robust Myocardial Perfusion MRI Quantification with DeepFermi},
+  author={Brahma, Sherine and Kofler, Andreas and Zimmermann, Felix F and Schaeffter, Tobias and Chiribiri, Amedeo and Kolbitsch, Christoph},
+  journal={IEEE Transactions on Biomedical Engineering},
+  year={2024},
+  publisher={IEEE}
+}
+```
