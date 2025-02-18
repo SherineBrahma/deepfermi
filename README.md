@@ -61,7 +61,7 @@ After testing, you can analyze the output arrays in different ways:
 ```
 
 <div align="center">
-  <img src="media/results" width="700" height="auto">
+  <img src="media/results.png" width="700" height="auto">
 </div>
 
   *  Evaluate performance metrics by running:
