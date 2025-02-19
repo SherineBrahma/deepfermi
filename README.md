@@ -19,7 +19,7 @@ https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
 
 ## 1. Clone the repository
 Clone the repository and create a new Python environment with Python 3.8 (e.g. using conda):
-```
+```bash
 git clone https://github.com/SherineBrahma/deepfermi.git
 conda create -n deepfermi python=3.8
 conda activate deepfermi
@@ -27,7 +27,7 @@ conda activate deepfermi
 
 ## 2. Install DeepFermi and dependencies
 Install DeepFermi in editable mode along with necessary tools for linting, testing, and post-install setup:
-``` 
+```bash 
 pip install -e ".[lint,test]"
 sh post_install/post_install.sh
 ```
