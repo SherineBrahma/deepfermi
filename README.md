@@ -6,10 +6,9 @@ A self-supervised deep learning framework that integrates the Fermi model for fa
 
 https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
 
-https://youtu.be/yCB7L0oh7cI?si=NeOh_ZKCR948E41i
 https://github.com/user-attachments/assets/5ce65f85-c079-4509-a272-abc54efefe5a
 
-https://github-production-user-asset-6210df.s3.amazonaws.com/34245188/414879245-5ce65f85-c079-4509-a272-abc54efefe5a.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250219%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250219T195347Z&X-Amz-Expires=300&X-Amz-Signature=b842878c3a7394c5c5c85522051458bdef2c03124ebb4857e7bb6f1ffdcfce53&X-Amz-SignedHeaders=host
+
 
 
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
