@@ -1,11 +1,10 @@
 # DeepFermi
 A self-supervised deep learning framework that integrates the Fermi model for fast, accurate, robust, and data-consistent myocardial quantification. For more detailed information, please refer to our publication, 'Robust Myocardial Perfusion MRI Quantification with DeepFermi,' which outlines the methodology and validation of the DeepFermi framework.
 
+<a id="publication"></a>
 [Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation)
 
 https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
-
-![Alt Text](/media/introduction_pitch.mp4)
 
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
@@ -17,7 +16,7 @@ https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
 
 # Installation
 
-## 1. Clone the repository
+### 1. Clone the repository
 Clone the repository and create a new Python environment with Python 3.8 (e.g. using conda):
 ```bash
 git clone https://github.com/SherineBrahma/deepfermi.git
@@ -25,8 +24,8 @@ conda create -n deepfermi python=3.8
 conda activate deepfermi
 ```
 
-## 2. Install DeepFermi and dependencies
-Install DeepFermi in editable mode along with necessary tools for linting, testing, and post-install setup:
+### 2. Install DeepFermi and dependencies
+Install DeepFermi in editable mode along with necessary tools for linting, testing. Run the post-install setup to configure the environment for testing and training:
 ```bash 
 pip install -e ".[lint,test]"
 sh post_install/post_install.sh
@@ -34,50 +33,41 @@ sh post_install/post_install.sh
 
 # Usage
 
-## Simulated DCE Perfusion Data Generation
-Before proceeding with training or testing, you first need to generate the DCE perfusion data. This can be done by running the ```data_generation.py``` script using the XCAT phantom file provided:
+## 1. Simulate DCE Perfusion Data
 
-```
+This repository includes a small dataset of five cardiac slices based on the [XCAT](https://aapm.onlinelibrary.wiley.com/doi/10.1118/1.3480985) phantom, for the purpose of code demonstration. Run the ```data_generation.py``` script to generate myocardial perfusion maps, and to simulate dynamic contrast agent (DCE) MRI images. Furthermore, you can customize the parameters directly in the data_generation.py script.
+
+```python
 python src/deepfermi/data_generation.py
 ```
 
-This will create a DCE perfusion dataset ```dce_perfusion_data.npz``` in the data folder. You can customize the relevant parameters for generating data in ```data_generation.py```.
+A DCE perfusion dataset, ```dce_perfusion_data.npz```, in created in the ```data``` folder. The DCE images that are synthesized are further induced with motion outliers to model practical scenarios, as shown in the gif below.
 
 <div align="center">
   <img src="media/simulation_dataset.gif" width="700" height="auto">
 </div>
 
-Note: Only five cardiac slices are provided in this repository for training, validation, and testing.
+## 2. Pre-Trained Model
 
-## Pre-Trained Model
-If you would like to test a pre-trained network (without training it yourself), you can directly run the following command:
-```
+A pre-trained model, trained on a larger dataset (see [publication](#bibtex-citation) for details), is included for quick testing. You can directly run the provided testing script to evaluate the pre-trained model on two datasets: i) with motion artifacts, and ii) without motion artifacts.
+
+```python
 sh script/test_job_queue.sh
 ```
-This script will:
 
-1. Load the pre-trained model.
-2. Test the model in two scenarios:
-   * With motion artifacts.
-   * Without motion artifacts.
-3. Generate the required output arrays.
+The results will be saved as output arrays in the ```experiments``` folder, which can be further assessed. For example, to visualize the generated arrays, run:
 
-After testing, you can analyze the output arrays in different ways:
-
-  *  Visualize the results by running:
-```
+```python
  python src/deepfermi/analysis/generate_img.py
 ```
 
+The example below shows that DeepFermi estimates are more robust to motion artifacts compared to traditional Fermi-deconvolution, which relies on well-established optimization algorithms without deep learning components, such as the  [Limited memory Broyden-Fletcher-Goldfarb-Shanno](https://link.springer.com/article/10.1007/BF01589116) (LBFGS) algorithm.
+
 <div align="center">
   <img src="media/results.png" width="700" height="auto">
-</div>
+</div>  
 
-  *  Evaluate performance metrics by running:
-```
- python src/deepfermi/analysis/evaluate_measures.py
-```
-You can also write your scripts to analyze the arrays.
+You can also write custom scripts to analyze the arrays. Additionally, an evaluate_measures.py script is provided for quantitatively assessing the performance of the model.
 
 ## Train DeepFermi from Scratch
 If you would prefer to train the network from scratch, you can do so after generating the data by running:
