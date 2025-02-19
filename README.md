@@ -6,6 +6,8 @@ A self-supervised deep learning framework that integrates the Fermi model for fa
 
 https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
 
+https://github.com/user-attachments/assets/bc4c5693-fdfb-46ae-9d2d-c25ad1fd472f
+
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
 ## Network Architecture
@@ -69,7 +71,7 @@ The example below shows that DeepFermi estimates are more robust to motion artif
 
 You can also write custom scripts to analyze the arrays. Additionally, an ```evaluate_measures.py script``` is provided for quantitatively assessing the performance of the model.
 
-## Train DeepFermi from Scratch
+## 3. Train DeepFermi from Scratch
 
 The training pipeline of DeepFermi initially uses LBFGS perfusion estimates as training labels for supervised pre-training, which helps speed up and enhance training convergence. This is followed by a robust self-supervised training methodology ( see [publication](#publication) for details), where the widely used [Fermi](https://aapm.onlinelibrary.wiley.com/doi/10.1118/1.598163) model is utilized to ensure data-consistency. The complete pipeline can be run using the following script:
 
