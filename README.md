@@ -3,7 +3,7 @@ A self-supervised deep learning framework that integrates the Fermi model for fa
 
 [Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation)
 
-https://github.com/SherineBrahma/deepfermi/blob/dev/media/introduction_pitch.mp4
+https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
 
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
