@@ -4,8 +4,6 @@ A self-supervised deep learning framework that integrates the Fermi model for fa
 <a id="publication"></a>
 [Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation)
 
-https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
-
 https://github.com/user-attachments/assets/5ce65f85-c079-4509-a272-abc54efefe5a
 
 
