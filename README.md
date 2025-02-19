@@ -41,7 +41,7 @@ This repository includes a small dataset of five cardiac slices based on the [XC
 python src/deepfermi/data_generation.py
 ```
 
-A DCE perfusion dataset, ```dce_perfusion_data.npz```, in created in the ```data``` folder. The DCE images that are synthesized are further induced with motion outliers to model practical scenarios, as shown in the gif below.
+A DCE perfusion dataset, ```dce_perfusion_data.npz```, is created in the ```data``` folder. The DCE images that are synthesized are further induced with motion outliers to model practical scenarios, as shown in the gif below.
 
 <div align="center">
   <img src="media/simulation_dataset.gif" width="700" height="auto">
@@ -49,7 +49,7 @@ A DCE perfusion dataset, ```dce_perfusion_data.npz```, in created in the ```data
 
 ## 2. Pre-Trained Model
 
-A pre-trained model, trained on a larger dataset (see [publication](#bibtex-citation) for details), is included for quick testing. You can directly run the provided testing script to evaluate the pre-trained model on two datasets: i) with motion artifacts, and ii) without motion artifacts.
+A pre-trained model, trained on a larger dataset (see [publication](#publication) for details), is included for quick testing. You can directly run the provided testing script to evaluate the pre-trained model on two datasets: i) with motion artifacts, and ii) without motion artifacts.
 
 ```python
 sh script/test_job_queue.sh
@@ -61,30 +61,32 @@ The results will be saved as output arrays in the ```experiments``` folder, whic
  python src/deepfermi/analysis/generate_img.py
 ```
 
-The example below shows that DeepFermi estimates are more robust to motion artifacts compared to traditional Fermi-deconvolution, which relies on well-established optimization algorithms without deep learning components, such as the  [Limited memory Broyden-Fletcher-Goldfarb-Shanno](https://link.springer.com/article/10.1007/BF01589116) (LBFGS) algorithm.
+The example below shows that DeepFermi estimates are more robust to motion artifacts compared to traditional Fermi-deconvolution, which relies on well-established optimization algorithms without deep learning components, such as the [Limited memory Broyden-Fletcher-Goldfarb-Shanno](https://link.springer.com/article/10.1007/BF01589116) (LBFGS) algorithm.
 
 <div align="center">
   <img src="media/results.png" width="700" height="auto">
 </div>  
 
-You can also write custom scripts to analyze the arrays. Additionally, an evaluate_measures.py script is provided for quantitatively assessing the performance of the model.
+You can also write custom scripts to analyze the arrays. Additionally, an ```evaluate_measures.py script``` is provided for quantitatively assessing the performance of the model.
 
 ## Train DeepFermi from Scratch
-If you would prefer to train the network from scratch, you can do so after generating the data by running:
 
-```
+The training pipeline of DeepFermi initially uses LBFGS perfusion estimates as training labels for supervised pre-training, which helps speed up and enhance training convergence. This is followed by a robust self-supervised training methodology ( see [publication](#publication) for details), where the widely used [Fermi](https://aapm.onlinelibrary.wiley.com/doi/10.1118/1.598163) model is utilized to ensure data-consistency. The complete pipeline can be run using the following script:
+
+```python
 sh script/train_job_queue.sh
 ```
-After training the model, you can proceed with testing it. However, keep in mind that the training data provided in this repository is quite small and intended primarily for code demonstration purposes, so the model's performance might not be optimal.
+
+After training the model, it can be tested as described for the pre-trained model, with appropriate adaptations to the script and config files. However, keep in mind that the training data provided in this repository is relatively small and intended mainly for code demonstration purposes, so the model's performance may not be optimal.
 
 # Contribution
 
-## How to Contribute
+### How to Contribute
 1. Fork the repo and create a new branch.
 2. Make changes and test them locally.
 3. Submit a pull request with your changes.
 
-## Pre-commit Hooks (Optional)
+### Pre-commit Hooks (Optional)
 To automatically run linting before each commit, run:
 
 ```
@@ -92,20 +94,20 @@ pip install pre-commit
 pre-commit install
 ```
 
-## Running Tests
+### Running Tests
 Run tests before submitting a pull request:
 ```
 pytest  
 ```
 
-## Issues and Feedback
-If you encounter any issues, feel free to open an issue on GitHub.
+### Issues and Feedback
+If you encounter any issues or have suggestions, feel free to open an issue on GitHub.
 
 # Citation
 
 <a id="bibtex-citation"></a>
 
-If you would like to cite this work, here is the BibTeX entry:
+If you found our work useful, please consider citing it. The BibTeX is provided below:
 
 ```bibtex
 @article{brahma2024robust,
