@@ -5,6 +5,8 @@ A self-supervised deep learning framework that integrates the Fermi model for fa
 
 https://github.com/user-attachments/assets/7e0e10cf-20e7-43e0-8725-bfdbba3d23e3
 
+![Alt Text](/media/introduction_pitch.mp4)
+
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
 ## Network Architecture
