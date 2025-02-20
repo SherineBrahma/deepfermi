@@ -1,11 +1,10 @@
 # DeepFermi
-A self-supervised deep learning framework that integrates the Fermi model for fast, accurate, robust, and data-consistent myocardial quantification. For more detailed information, please refer to our publication, 'Robust Myocardial Perfusion MRI Quantification with DeepFermi,' which outlines the methodology and validation of the DeepFermi framework.
-
-<a id="publication"></a>
-[Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation)
+A self-supervised deep learning framework that integrates the Fermi model for fast, accurate, robust, and data-consistent myocardial quantification. For more detailed information, please refer to our publication, 'Robust Myocardial Perfusion MRI Quantification with DeepFermi,' which outlines the methodology and validation of the DeepFermi framework. A brief overview is provided in the video below.
 
 https://github.com/user-attachments/assets/5ce65f85-c079-4509-a272-abc54efefe5a
 
+<a id="publication"></a>
+| [Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation) |
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
 ## Network Architecture
@@ -77,7 +76,7 @@ The training pipeline of DeepFermi initially uses LBFGS perfusion estimates as t
 sh script/train_job_queue.sh
 ```
 
-After training the model, it can be tested as described for the pre-trained model, with appropriate adaptations to the script and config files. However, keep in mind that the training data provided in this repository is relatively small and intended mainly for code demonstration purposes, so the model's performance may not be optimal.
+After training the model, it can be tested as described for the pre-trained model, with appropriate adaptations to the script and config files. However, keep in mind that the training data provided in this repository is small and intended mainly for code demonstration purposes, so the model's performance will not be optimal.
 
 # Contribution
 
