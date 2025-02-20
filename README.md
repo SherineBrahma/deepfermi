@@ -5,6 +5,7 @@ https://github.com/user-attachments/assets/5ce65f85-c079-4509-a272-abc54efefe5a
 
 <a id="publication"></a>
 | [Publication](https://ieeexplore.ieee.org/document/10731565) | [Citation](#bibtex-citation) |
+
 **Contribution**: Sherine Brahma, Andreas Kofler, Felix F. Zimmermann, Tobias Schaeffter, Amedeo Chiribiri, and Christoph Kolbitsch.
 
 ## Network Architecture
