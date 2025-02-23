@@ -5,14 +5,11 @@ from typing import Tuple
 
 import torch
 import yaml
-from data_loading import DatasetDCEPerfusion
-from data_loading import Transform
+from config import Mode, TrainConfig
+from data_loading import DatasetDCEPerfusion, Transform
 from network.DeepFermi_net import DeepFermi
 from network.Unet import Unet
 from training_manager import TrainingManager
-
-from config import Mode
-from config import TrainConfig
 
 
 def parse_override_arguments() -> argparse.Namespace:
@@ -35,9 +32,12 @@ def parse_override_arguments() -> argparse.Namespace:
     parser.add_argument('--cross_val_fold', default=None, type=int)
     parser.add_argument('--unet_lr', default=None, type=float)
     parser.add_argument('--unet_wd', default=None, type=float)
-    parser.add_argument('--build_dataset_flag', default=None, choices=(True, False), type=eval)
-    parser.add_argument('--train_from_ckpt', default=None, choices=(True, False), type=eval)
-    parser.add_argument('--cross_val_flag', default=None, choices=(True, False), type=eval)
+    parser.add_argument('--build_dataset_flag', default=None,
+                        choices=(True, False), type=eval)
+    parser.add_argument('--train_from_ckpt', default=None,
+                        choices=(True, False), type=eval)
+    parser.add_argument('--cross_val_flag', default=None,
+                        choices=(True, False), type=eval)
     args = parser.parse_args()
 
     return args
@@ -70,22 +70,52 @@ def read_cfg(config_path, override_args) -> TrainConfig:
     cfg = TrainConfig.from_yaml(config_path)
 
     # Overriding configuration if command line input provided
-    cfg.info.project_name = override_args.project_name or cfg.info.project_name
-    cfg.train_params.dataset.file_name = override_args.dataset_file_name or cfg.train_params.dataset.file_name
+    cfg.info.project_name = (
+        override_args.project_name
+        or cfg.info.project_name)
+    cfg.train_params.dataset.file_name = (
+        override_args.dataset_file_name
+        or cfg.train_params.dataset.file_name
+        )
     cfg.train_params.dataset.build_dataset_flag = (
-        override_args.build_dataset_flag or cfg.train_params.dataset.build_dataset_flag
-    )
-    cfg.train_params.mode = override_args.mode or cfg.train_params.mode
-    cfg.train_params.network.train_from_ckpt = override_args.train_from_ckpt or cfg.train_params.network.train_from_ckpt
-    cfg.train_params.cross_val_flag = override_args.cross_val_flag or cfg.train_params.cross_val_flag
-    cfg.train_params.cross_val_k = override_args.cross_val_k or cfg.train_params.cross_val_k
-    cfg.train_params.cross_val_fold = override_args.cross_val_fold or cfg.train_params.cross_val_fold
-    cfg.train_params.optimizer.unet_lr = override_args.unet_lr or cfg.train_params.optimizer.unet_lr
-    cfg.train_params.optimizer.unet_wd = override_args.unet_wd or cfg.train_params.optimizer.unet_wd
+        override_args.build_dataset_flag
+        or cfg.train_params.dataset.build_dataset_flag
+        )
+    cfg.train_params.mode = (
+        override_args.mode
+        or cfg.train_params.mode
+        )
+    cfg.train_params.network.train_from_ckpt = (
+        override_args.train_from_ckpt
+        or cfg.train_params.network.train_from_ckpt
+        )
+    cfg.train_params.cross_val_flag = (
+        override_args.cross_val_flag
+        or cfg.train_params.cross_val_flag
+        )
+    cfg.train_params.cross_val_k = (
+        override_args.cross_val_k
+        or cfg.train_params.cross_val_k
+        )
+    cfg.train_params.cross_val_fold = (
+        override_args.cross_val_fold
+        or cfg.train_params.cross_val_fold
+        )
+    cfg.train_params.optimizer.unet_lr = (
+        override_args.unet_lr
+        or cfg.train_params.optimizer.unet_lr
+        )
+    cfg.train_params.optimizer.unet_wd = (
+        override_args.unet_wd
+        or cfg.train_params.optimizer.unet_wd
+        )
     cfg.update_yaml()
 
     # Preliminary checks
-    msg = 'Only mode allowed during training ' "is 'pre_training' and 'fine_tuning'"
+    msg = (
+        "Only mode allowed during training "
+        "is 'pre_training' and 'fine_tuning'"
+        )
     assert cfg.train_params.mode.value in [
         'pre_training',
         'fine_tuning',
@@ -109,7 +139,8 @@ def load_dataset_obj(cfg) -> Tuple[DatasetDCEPerfusion, DatasetDCEPerfusion]:
     """
 
     # Save a reference to the class itself
-    file_path = Path.joinpath(Path(cfg.paths.dataset), cfg.train_params.dataset.file_name)
+    file_path = Path.joinpath(Path(cfg.paths.dataset),
+                              cfg.train_params.dataset.file_name)
     build_dataset = cfg.train_params.dataset.build_dataset_flag
     if cfg.train_params.cross_val_flag is True:
         train_dataset_path = Path.joinpath(
@@ -129,8 +160,10 @@ def load_dataset_obj(cfg) -> Tuple[DatasetDCEPerfusion, DatasetDCEPerfusion]:
             + '.pkl',
         )
     else:
-        train_dataset_path = Path.joinpath(Path(cfg.paths.dataset), 'train_dataset.pkl')
-        val_dataset_path = Path.joinpath(Path(cfg.paths.dataset), 'val_dataset.pkl')
+        train_dataset_path = Path.joinpath(Path(cfg.paths.dataset),
+                                           'train_dataset.pkl')
+        val_dataset_path = Path.joinpath(Path(cfg.paths.dataset),
+                                         'val_dataset.pkl')
     if build_dataset is True:
         transform = Transform(cfg)
         train_dataset = DatasetDCEPerfusion.construct_from_npz(
@@ -141,7 +174,11 @@ def load_dataset_obj(cfg) -> Tuple[DatasetDCEPerfusion, DatasetDCEPerfusion]:
             aug_dataset_flag=cfg.train_params.aug_dataset_flag,
         )
         val_dataset = DatasetDCEPerfusion.construct_from_npz(
-            file_path, transform, pid_to_load=cfg.train_params.nval, aug_dataset_flag=False, config=cfg
+            file_path,
+            transform,
+            pid_to_load=cfg.train_params.nval,
+            aug_dataset_flag=False,
+            config=cfg
         )
         # Save dataset
         with open(train_dataset_path, 'wb') as f:

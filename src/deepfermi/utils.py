@@ -118,3 +118,38 @@ def interp_linear_1D(y, size=None):
     M = m.repeat_interleave(int(o), dim=-1)
     Y = torch.cat((M * X.unsqueeze(0) + C, y[..., nt-1:nt]), dim=-1)
     return Y
+
+
+def expand_dim(xin, f_dim_pad=0, b_dim_pad=0):
+    
+    f_dim = (None,) * f_dim_pad
+    b_dim = (..., ) + (None, ) * b_dim_pad
+    
+    return xin[f_dim][b_dim]
+
+
+def Interp_Linear_1D(y, size=None):
+
+    assert size is not None, "Enter output size"
+    # Calculating slope and intercept
+    nt = y.shape[-1]
+    o = size/nt
+    x = expand_dim(
+        torch.linspace(0, 1, nt, device=y.device),
+        f_dim_pad=y.dim()-1
+        )
+    m = (y[..., 1:] - y[..., :-1]) / (x[..., 1:] - x[..., :-1])
+    c = (-m*x[..., :-1]) + y[..., :-1]
+    i_dx = torch.arange(0, nt-1)
+    dx = (x[..., i_dx + 1] - x[..., i_dx])/o
+    # Linear interpolation
+    DX = torch.kron(
+        dx.unsqueeze(-1), torch.diag(torch.arange(0, o, device=y.device))
+        )    
+    X = (torch.kron(
+        x[..., i_dx].unsqueeze(-1), torch.eye(int(o), device=y.device)
+        ) + DX).sum(-1)
+    C = c.repeat_interleave(int(o), dim=-1)
+    M = m.repeat_interleave(int(o), dim=-1)
+    Y = torch.cat((M * X + C, y[..., nt-1:nt]), dim=-1)
+    return Y
