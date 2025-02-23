@@ -2,9 +2,9 @@
 
 # General
 info:
-  project_name: 02_test_manual_train
+  project_name: Debug_Test
   project_description: Developing Code
-  read_project_name: 01_manual_train
+  read_project_name: Debug
 # Paths
 paths:
   dataset: data/
@@ -22,7 +22,7 @@ test_params:
     crop_dim: [60, 60]
     eta_bkg_ref: [0.001667, 0.1, 0.01]
   # Network specific
-  load_unet: unet
+  load_unet: unet_load
   # Fermi Operator
   osamp: 20
   pre_scale_factor: 10
@@ -31,7 +31,7 @@ test_params:
   mode: 'testing' # 'pre_training' 'fine_tuning'
   nsamp: 100
   calib_nsamp: 100
-  clean_outliers: True
+  clean_outliers: False
   morph_flag: False
   is_erosion_not_dilate: False
   # Backend device

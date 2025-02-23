@@ -1,4 +1,4 @@
-####################################### Training mode configurations ###############################################  
+####################################### Training mode configurations ###############################################
 
 # General Information
 info:
@@ -14,8 +14,8 @@ paths:
 train_params:
   # Dataset specific
   dataset:
-    file_name: dce_perfusion_data.npz 
-    build_dataset_flag: False 
+    file_name: dce_perfusion_data.npz
+    build_dataset_flag: False
     SNR_ctc: 15
     img_dim: [120, 120]
     crop_dim: [60, 60]
@@ -24,7 +24,7 @@ train_params:
   network:
     # Architecture
     ncin: 2
-    nfilters: 16    
+    nfilters: 16
     nstage: 3
     nconv_stage: 2
     ncout: 12
@@ -32,18 +32,17 @@ train_params:
     dropout: 0.0
     # Data-consistency configurations
     osamp: 5
-    nu: 1
-    max_iter_lbfgs: 500
-    max_eval_lbfgs: 500
+    max_iter_lbfgs: 10000
+    max_eval_lbfgs: 10000
     # Check-pointing
-    train_from_ckpt: True
+    train_from_ckpt: False
     load_unet: unet_load
     backprop_ckpt: 0
   # Optimizer configurations
   optimizer:
-    unet_lr: 10.e-4
-    unet_wd: 10.e-12
-  # General 
+    unet_lr: 10.e-5
+    unet_wd: 10.e-7
+  # General
   ntrain: ['Pat0', 'Pat1', 'Pat2']
   nval: ['Pat3']
   ntest: ['Pat4']
@@ -53,7 +52,7 @@ train_params:
   ssup_split: 0.3
   mode: 'fine_tuning' # 'pre_training' 'fine_tuning'
   # Fermi Operator
-  osamp: 20
+  osamp: 5
   pre_scale_factor: 10
   # Backend device
   device: 'cuda'
@@ -62,4 +61,4 @@ train_params:
   cross_val_k: 2
   cross_val_fold: 1
   # Augment training dataset
-  aug_dataset_flag: True 
+  aug_dataset_flag: False # True
