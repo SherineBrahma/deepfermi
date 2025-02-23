@@ -1,4 +1,4 @@
-####################################### Testing mode configurations ###############################################  
+####################################### Testing mode configurations ###############################################
 
 # General
 info:
@@ -7,7 +7,7 @@ info:
   read_project_name: 01_manual_train
 # Paths
 paths:
-  dataset: data/ 
+  dataset: data/
   read: experiments/
   save: experiments/
 
@@ -28,7 +28,7 @@ test_params:
   pre_scale_factor: 10
   # General
   ntest: ['Pat4']
-  mode: 'testing' # 'pre_training' 'fine_tuning' 
+  mode: 'testing' # 'pre_training' 'fine_tuning'
   nsamp: 100
   calib_nsamp: 100
   clean_outliers: False

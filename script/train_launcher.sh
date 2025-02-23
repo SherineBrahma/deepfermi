@@ -19,4 +19,4 @@ CUDA_VISIBLE_DEVICES=$cuda_device python main.py --project_name=$pretraining_fol
 # Model-based training
 mkdir $experiments_directory/$model_based_training_folder
 cp $experiments_directory/$pretraining_folder/model/unet/unet_iter_4000 $experiments_directory/$model_based_training_folder/unet_load
-CUDA_VISIBLE_DEVICES=$cuda_device python main.py --project_name=$model_based_training_folder  --dataset_file_name=$dataset_file_name --build_dataset_flag False --mode='fine_tuning' --train_from_ckpt True  --cross_val_flag True --cross_val_k=$cross_val_k --cross_val_fold=$cross_val_fold --unet_lr=10e-4 --unet_wd=10e-12
+CUDA_VISIBLE_DEVICES=$cuda_device python main.py --project_name=$model_based_training_folder  --dataset_file_name=$dataset_file_name --build_dataset_flag False --mode='fine_tuning' --train_from_ckpt True  --cross_val_flag True --cross_val_k=$cross_val_k --cross_val_fold=$cross_val_fold --unet_lr=10e-5 --unet_wd=10e-12
