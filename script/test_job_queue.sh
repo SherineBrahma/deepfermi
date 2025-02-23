@@ -8,7 +8,7 @@ experiments_directory=$deepfermi_home_dir/experiments/
 # Testing pretrained deepfermi network with outliers retained
 SCREEN_NAME='test_deepfermi_pretrained_outlier_retained'
 project_name='01_02_test_deepfermi_pretrained_outlier_retained'
-read_project_name='02_02_model_based' # '01_01_deepfermi_pretrained'
+read_project_name='01_01_deepfermi_pretrained'
 dataset_file_name='dce_perfusion_data.npz'
 config_path=$deepfermi_home_dir/config/test_config_outlier_retained.yaml
 cuda_device=1
