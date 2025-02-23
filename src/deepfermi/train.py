@@ -1,5 +1,4 @@
-import numbers as np
-
+import numpy as np
 import torch
 from fermi import ModZ_OD, convolve, fermi_ir_func, ssup_mask
 from utils import interp_linear_1D
